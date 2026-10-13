@@ -1,0 +1,16 @@
+# MATLAB autosave / temporary
+*.asv
+*.m~
+*.autosave
+slprj/
+codegen/
+*.slxc
+*.mex*
+
+# Generated Simulink model / outputs (keep if team decides to version it)
+# UAV_Team_Model.slx
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/

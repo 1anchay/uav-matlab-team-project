@@ -1,0 +1,6 @@
+# После того как узнаете GitHub usernames, замените @username_* и переименуйте файл в CODEOWNERS.
+/team/01_ernesto_horserofl_navigation/ @username_ernesto
+/team/02_ivan_zhivoglyadov_flight_control/ @username_ivan
+/team/03_bodya_lemchenko_route_planning/ @username_bodya
+/team/04_aleksandr_lzedzei_object_detection/ @username_aleksandr
+/team/05_arseniy_terekhov_ground_station/ @username_arseniy
