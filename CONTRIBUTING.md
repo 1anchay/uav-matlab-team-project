@@ -1,55 +1,40 @@
-# Как работать командой
+# Работа команды из 7 участников
 
-## 1. Клонирование
+## Клонирование
 ```powershell
 git clone https://github.com/1anchay/uav-matlab-team-project.git
 cd uav-matlab-team-project
 ```
 
-## 2. Каждый работает в своей ветке
-Пример:
-```powershell
-git switch team/ivan-flight-control
-```
+## Ветки
+Каждый работает только в своей ветке, указанной в [TEAM_ASSIGNMENTS.md](TEAM_ASSIGNMENTS.md). Например:
 
-Перед началом новой работы:
 ```powershell
 git fetch origin
+git switch team/artem-flight-safety
 git merge origin/main
 ```
 
-## 3. Меняем только свою подсистему
-Основные рабочие файлы лежат в `team/<ваша_папка>/`.
+Ключевые новые ветки:
+- `team/artem-flight-safety` — Артём Пучков, безопасность;
+- `team/ivan-kasimov-energy` — Иван Касимов, энергосистема.
 
-## 4. Проверка в MATLAB
+## MATLAB-проверки
 ```matlab
 run_project
 run('tests/run_tests.m')
 ```
 
-## 5. Сохраняем изменения
+## Сохранение работы
 ```powershell
 git add .
-git commit -m "[FLIGHT] smooth yaw control"
+git commit -m "[SAFETY] add obstacle guard tests"
 git push
 ```
 
-Префиксы коммитов:
-- `[NAV]` — навигация;
-- `[FLIGHT]` — управление;
-- `[ROUTE]` — маршрут;
-- `[DETECT]` — обнаружение;
-- `[GROUND]` — связь/станция;
-- `[INTEGRATION]` — общие изменения.
+Префиксы: `[NAV]`, `[FLIGHT]`, `[ROUTE]`, `[DETECT]`, `[GROUND]`, `[SAFETY]`, `[ENERGY]`, `[INTEGRATION]`.
 
-## 6. Pull Request
-После push участник создаёт Pull Request из своей ветки в `main` и пишет:
-- что изменено;
-- какие входы/выходы затронуты;
-- как проверено;
-- есть ли изменения в общих файлах.
+## Pull Request
+Укажите, что изменено, какие входы/выходы затронуты, пройдены ли тесты. При изменении интерфейса одновременно обновите `docs/INTERFACES.md` и связанные вызовы.
 
-Другой участник просматривает PR. После проверки изменения объединяются с `main`.
-
-## Главное правило
-Никто не переписывает чужую подсистему «молча». Если нужен новый сигнал между двумя блоками — сначала согласуйте название и формат в `docs/INTERFACES.md`.
+Другой участник проверяет PR. Только после этого изменения объединяются с `main`.

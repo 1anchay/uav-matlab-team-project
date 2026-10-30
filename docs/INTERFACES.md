@@ -1,41 +1,56 @@
-# Интерфейсы между подсистемами
+# Интерфейсы взаимодействия семи модулей
 
-Этот файл нужен, чтобы пять частей проекта можно было развивать независимо.
+## №1 Navigation
+`subsystem_navigation(state,cfg) -> nav`
 
-## Navigation → остальные
-`nav`
-- `position [1x3]`, м;
-- `velocity [1x3]`, м/с;
-- `speed`, м/с;
-- `yaw`, рад.
+- `nav.position [1x3]` — м;
+- `nav.velocity [1x3]` — м/с;
+- `nav.speed` — м/с;
+- `nav.course` — курс, рад;
+- `nav.altitude`, `nav.positionValid`, `nav.headingValid`.
 
-## Route Planning → Flight Control
-`target [1x3]` — очередная контрольная точка `[x y z]`.
+## №3 Route Planning (до цикла)
+`subsystem_route_planning(startPos,goalPos,obstacles,cfg) -> route`
 
-Полный маршрут: `route [N x 3]`.
+- `route [Nx3]` — набор waypoint;
+- `target [1x3]` — текущая цель для Flight Control, выбирается интегратором.
 
-## Object Detection → интеграция/планировщик/станция
-`detections` — массив структур. Базовые поля должны описывать объект, расстояние и направление. Новые поля разрешается добавлять, но нельзя удалять используемые поля без изменения интеграции и тестов.
+## №4 Object Detection
+`subsystem_object_detection(nav,obstacles,cfg) -> detections`
 
-## Flight Control → UAV Dynamics
-`control`
-- `acceleration [1x3]`;
-- `yawRate`.
+Элемент массива: `name`, `distanceToBoundary`, `bearing`, `relativeXY [1x2]`, `isWarning`.
 
-## Ground Station
-`packet`
-- состояние связи;
-- координаты;
-- высота;
-- скорость;
-- курс;
-- заряд;
-- текущий waypoint;
-- число/данные обнаруженных объектов.
+## №2 Flight Control
+`subsystem_flight_control(nav,target,cfg) -> control`
+
+- `control.acceleration [1x3]` — м/с²;
+- `control.yawRate` — рад/с;
+- дополнительные поля: `target`, `desiredVelocity`, `positionError`.
+
+## №7 Energy
+`subsystem_energy(state,cfg) -> energy`
+
+- `energy.currentBattery`, `energy.nextBattery` — %;
+- `energy.drainRate` — процентных пунктов в секунду;
+- `energy.estimatedRemainingSeconds` — с;
+- `energy.lowBattery`, `energy.criticalBattery` — логические флаги.
+
+## №6 Flight Safety
+`[safeControl,safety] = subsystem_flight_safety(nav,detections,control,energy,cfg)`
+
+- `safeControl` — структура `control` с проверенными/скорректированными `acceleration` и `yawRate`;
+- `safety.status` — `OK`, `OBSTACLE_WARNING`, `OBSTACLE_AVOIDANCE`, `LOW_BATTERY`, `CRITICAL_BATTERY`;
+- `safety.intervened`, `safety.obstacleWarning`, `safety.nearestObstacleDistance`, `safety.lowBattery`, `safety.criticalBattery`.
+
+## №5 Ground Station
+`subsystem_ground_station(nav,state,safeControl,waypointIndex,detections,cfg,safety,energy) -> packet`
+
+Основные поля: `linkOK`, `position`, `altitude`, `speed`, `course`, `battery`, `waypointIndex`, `detectedObjects`, `commandedAcceleration`, `safetyStatus`, `batteryWarning`, `estimatedRemainingTime`.
+
+Последние два аргумента (`safety`, `energy`) — **необязательные** для совместимости с прежним кодом.
+
+## Общая Dynamics
+На шаге интеграции обновляет `state.position`, `state.velocity`, `state.yaw` из `safeControl` и `state.battery` из `energy.nextBattery`. Это общая модель, не участник №8.
 
 ## Правило изменения интерфейса
-Если участник меняет имя/тип поля, он обязан:
-1. обновить этот документ;
-2. обновить вызывающий код;
-3. обновить/добавить тест;
-4. явно написать об изменении в Pull Request.
+Любая замена названия или типа поля требует синхронного обновления интегратора, этого документа и тестов; изменения обсуждаются в Pull Request.

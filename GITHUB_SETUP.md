@@ -1,34 +1,23 @@
-# Создание общего публичного GitHub-репозитория
+# Подключение семи участников к GitHub
 
-Проект подготовлен под **один общий репозиторий**. Это лучше пяти отдельных репозиториев: изменения видны всей команде, а итоговая версия всегда собирается в `main`.
+У проекта один общий репозиторий: `1anchay/uav-matlab-team-project`. Владелец может предоставить коллегам права записи.
 
-## Автоматический вариант для Windows
-1. Установить Git и GitHub CLI (`gh`).
-2. Открыть PowerShell в папке проекта.
-3. Выполнить:
+## Два новых участника
+- **Артём Пучков:** `team/artem-flight-safety` и `team/06_artem_puchkov_flight_safety/`.
+- **Иван Касимов:** `team/ivan-kasimov-energy` и `team/07_ivan_kasimov_energy/`.
 
+Чтобы пригласить их как collaborators, нужно узнать **их GitHub usernames**. Отображаемые имена из мессенджера не подходят для приглашения.
+
+## Создать персональные ветки вручную
 ```powershell
-Set-ExecutionPolicy -Scope Process Bypass
-.\bootstrap_github.ps1
+git fetch origin
+git switch main
+git pull
+git switch -c team/artem-flight-safety
+git push -u origin team/artem-flight-safety
+git switch main
+git switch -c team/ivan-kasimov-energy
+git push -u origin team/ivan-kasimov-energy
 ```
 
-Скрипт:
-- создаст публичный `1anchay/uav-matlab-team-project`;
-- загрузит код;
-- создаст 5 персональных веток;
-- попросит GitHub username каждого участника;
-- отправит им приглашения с правом `push`.
-
-## Почему одного публичного repo недостаточно для редактирования
-Публичность позволяет любому **смотреть и клонировать** код, но не даёт право менять его напрямую. Для совместной работы владельцу нужно пригласить GitHub-аккаунты участников как collaborators. Скрипт делает это автоматически после ввода их username.
-
-## После подключения участника
-Например, Иван выполняет:
-
-```powershell
-git clone https://github.com/1anchay/uav-matlab-team-project.git
-cd uav-matlab-team-project
-git switch team/ivan-flight-control
-```
-
-После работы — `commit`, `push` и Pull Request в `main`.
+Дополнительно можно использовать `bootstrap_github.ps1` (уже существующий репозиторий скрипт не пересоздаёт). Работа ведётся через Pull Request.
