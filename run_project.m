@@ -1,16 +1,12 @@
-%% UAV TEAM PROJECT
-% Небольшой учебный проект по модельно-ориентированному проектированию.
-% Пять программных подсистем соответствуют пяти участникам команды.
-
+%% UAV TEAM PROJECT — 7 участников / 7 подсистем
 clear; clc; close all;
-
 setup_paths();
 
 cfg = config_uav();
 rng(cfg.seed);
 scenario = init_scenario(cfg);
 
-fprintf('=== UAV MODEL-ORIENTED TEAM PROJECT ===\n');
+fprintf('=== UAV TEAM PROJECT: SEVEN MODULES ===\n');
 fprintf('Planning route...\n');
 route = subsystem_route_planning(scenario.start, scenario.goal, scenario.obstacles, cfg);
 fprintf('Waypoints: %d\n', size(route,1));
@@ -24,4 +20,6 @@ fprintf('Final position: [%.1f %.1f %.1f] m\n', results.finalPosition);
 fprintf('Final battery: %.1f %%\n', results.finalBattery);
 fprintf('Telemetry delivery: %.1f %%\n', results.packetDeliveryRate);
 fprintf('Minimum obstacle-boundary distance: %.2f m\n', min(results.minObstacleDistance));
-fprintf('\nRun build_simulink_model to generate the block architecture in Simulink.\n');
+fprintf('Safety interventions: %d\n', sum(results.safetyIntervention));
+fprintf('Average battery drain rate: %.3f percentage points/s\n', mean(results.batteryDrainRate));
+fprintf('\nRun build_simulink_model for the architectural overview in Simulink.\n');
