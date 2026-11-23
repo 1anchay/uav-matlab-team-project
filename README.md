@@ -4,6 +4,8 @@
 
 Учебный проект по модельно-ориентированному проектированию автономного БПЛА. Утверждённое распределение ролей зафиксировано в [TEAM_ASSIGNMENTS.md](TEAM_ASSIGNMENTS.md), а связи между модулями — в [схеме архитектуры](docs/TEAM_INTERACTION.md).
 
+**Начать знакомство с проектом:** [Текущий статус и план демонстрации](docs/PROJECT_STATUS.md) · [Технический отчёт](docs/ACADEMIC_TECHNICAL_REPORT.md) · [7 спикеров](docs/DEFENSE_PRESENTATION_7_SPEAKERS.md).
+
 ## Участники и модули
 
 | № | Разработчик | Функция | Исходный код |
@@ -178,3 +180,7 @@ run_defense_showcase(false)
 [сценарий защиты семи участников](docs/DEFENSE_PRESENTATION_7_SPEAKERS.md),
 [инструкция по показу преподавателю](docs/TEACHER_DEMO_RUNBOOK.md),
 [Simulink V3](models/v3/README.md).
+
+**CI V3 MATLAB-only:** подтверждены unit-тесты 6/6 и quick robustness
+4/4 в GitHub Actions (run ID 45167864440). **Это не проверка новой V3
+Simulink-модели.** Отдельно запустить `tests/run_v3_simulink_tests.m`.
