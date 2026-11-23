@@ -39,17 +39,17 @@ GOAL_REACHED, 1 replan, 11.75 м до круга и завершение за 22
 Отдельно испытать сценарий с двумя объектами, чтобы не экстраполировать
 успешный one-circle сценарий на любые карты.
 
-## Дополнительные критерии перед защитой — pending
+## Дополнительные критерии перед защитой — подтверждённые базовые сценарии
 
 | ID | Новая проверка | Файл | Статус |
 |---|---|---|---|
-| R-17 | Два физических скрытых круга в Simulink | `run_v3_scenario('two_unknown')` | implemented, pending |
-| R-18 | Коллизия при старте → код 2 | `run_v3_scenario('collision_at_start')` | implemented, pending |
-| R-19 | Критический заряд → код 3 | `run_v3_scenario('critical_battery')` | implemented, pending |
-| R-20 | Невалидное состояние → код 4 | `run_v3_scenario('invalid_state')` | implemented, pending |
-| R-21 | Начало на цели → код 1 | `run_v3_scenario('goal_at_start')` | implemented, pending |
-| R-22 | Сегментная проверка зазора | `v3_swept_clearance.m` | unit test pending |
+| R-17 | Два физических скрытых круга в Simulink | `run_v3_scenario('two_unknown')` | verified — V3 Extended 6/6 |
+| R-18 | Коллизия при старте → код 2 | `run_v3_scenario('collision_at_start')` | verified — V3 Extended 6/6 |
+| R-19 | Критический заряд → код 3 | `run_v3_scenario('critical_battery')` | verified — V3 Extended 6/6 |
+| R-20 | Невалидное состояние → код 4 | `run_v3_scenario('invalid_state')` | verified — V3 Extended 6/6 |
+| R-21 | Начало на цели → код 1 | `run_v3_scenario('goal_at_start')` | verified — V3 Extended 6/6 |
+| R-22 | Сегментная проверка зазора | `v3_swept_clearance.m` | MATLAB CI scenario contracts 4/4 PASS + V3 Extended 6/6 |
 
-Тест `run('tests/run_v3_extended_integration_tests.m')` проверяет
-новые требования; его результат не предсказан заранее. Запуск
+Тест `run('tests/run_v3_extended_integration_tests.m')` проверил
+новые требования: **6/6 PASS** в MATLAB Online 23.11.2026. Запуск
 `run_v3_acceptance_campaign` сообщает о FAIL и ERROR, а не маскирует их.

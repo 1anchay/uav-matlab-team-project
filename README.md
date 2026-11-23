@@ -204,3 +204,9 @@ invalid_state и goal_at_start. **Новые Simulink-сценарии ожид�
 результатом. Подробности: [V3 Extended Validation](docs/V3_EXTENDED_VALIDATION.md).
 
 Перед презентацией: [план завершения проекта](docs/DEFENSE_FINALIZATION_PLAN.md).
+
+**Новый подтверждённый результат V3:** шесть дополнительных
+интеграционных Simulink-сценариев **6/6 PASS**; 2 неизвестных круга,
+2 online replans, GOAL_REACHED за 24.70 с, 11.75 м до границы. GitHub
+CI scenario contracts 4/4 PASS. Подробнее:
+[протокол V3 Extended](docs/evidence/V3_EXTENDED_6_OF_6_20261123.md).
