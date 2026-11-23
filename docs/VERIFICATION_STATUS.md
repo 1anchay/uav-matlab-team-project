@@ -264,3 +264,20 @@ V2 robustness smoke tests: 4/4 measured runs PASS
 
 Подробный лог: [V3 Extended 6/6](evidence/V3_EXTENDED_6_OF_6_20261123.md).
 Бинарные исходники .slx и полная выгрузка acceptance.csv ещё не в GitHub.
+
+## V3 Extended — экспорт измеренных результатов подтверждён
+
+23.11.2026 пользователь повторно запустил `run_v3_acceptance_campaign(false)`;
+вывод вновь подтвердил **6/6 PASS** с теми же измерениями. Затем
+`export_v3_acceptance_report(campaign)` сообщил:
+
+```text
+Extended V3 evidence exported:
+/MATLAB Drive/Repositories/uav-matlab-team-project/results/v3/extended
+```
+
+По контракту экспортера ожидаются локальные `acceptance.csv` и
+`RESULTS.md`; непосредственно содержимое этих файлов в GitHub не
+просмотрено, и они **не добавлены** в репозиторий. Перед защитой следует
+проверить файлы в MATLAB Drive, сохранить версионированную копию
+подтверждённых материалов и записать версию MATLAB/коммит.
