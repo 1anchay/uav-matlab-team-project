@@ -35,6 +35,8 @@ ylabel('Speed, m/s');
 nexttile;
 plot(results.time, results.battery, 'LineWidth', 1.5); grid on;
 ylabel('Battery, %'); xlabel('Time, s');
+hold on; yline(cfg.battery.lowWarningPercent, '--', 'Low battery');
+yline(cfg.safety.criticalBatteryPercent, '--', 'Critical');
 
 figure('Name','Safety and communication');
 tiledlayout(2,1);
@@ -46,4 +48,18 @@ nexttile;
 stairs(results.time, double(results.linkOK), 'LineWidth', 1.0); grid on;
 ylim([-0.1 1.1]); yticks([0 1]); yticklabels({'lost','received'});
 xlabel('Time, s'); ylabel('Telemetry packet');
+
+figure('Name','UAV module diagnostics');
+tiledlayout(3,1);
+nexttile;
+stairs(results.time, double(results.safetyIntervention), 'LineWidth', 1.2);
+hold on; stairs(results.time, double(results.predictedConflict), '--', 'LineWidth', 1.0);
+ylim([-0.1 1.1]); grid on; ylabel('Safety');
+legend('Intervention','Predicted conflict','Location','best');
+nexttile;
+stairs(results.time, double(results.navValid), 'LineWidth', 1.2);
+ylim([-0.1 1.1]); grid on; ylabel('Nav valid');
+nexttile;
+plot(results.time, results.batteryDrainRate, 'LineWidth', 1.5);
+grid on; ylabel('Battery drain, %/s'); xlabel('Time, s');
 end
