@@ -79,7 +79,8 @@ if makePlots
     th = linspace(0,2*pi,160);
     for k = 1:size(map,2)
         plot(map(1,k)+map(3,k)*cos(th), ...
-            map(2,k)+map(3,k)*sin(th),'--','Color',[0.79 0.31 0.29]);
+            map(2,k)+map(3,k)*sin(th),'--','Color',[0.79 0.31 0.29], ...
+            'HandleVisibility','off');
     end
     plot(baseline.state(:,1),baseline.state(:,2), ...
         'LineWidth',1.6,'Color',[0.36 0.42 0.77], ...
@@ -87,11 +88,12 @@ if makePlots
     plot(state(:,1),state(:,2), ...
         'LineWidth',1.8,'Color',[0.13 0.57 0.39], ...
         'DisplayName','Unknown obstacle');
-    plot(hazardCenter(1),hazardCenter(2),'rx','MarkerSize',12);
-    plot(100,80,'kp','MarkerSize',10);
+    plot(hazardCenter(1),hazardCenter(2),'rx','MarkerSize',12, ...
+        'HandleVisibility','off');
+    plot(100,80,'kp','MarkerSize',10,'HandleVisibility','off');
     xlabel('X (m)'); ylabel('Y (m)');
     title('Route planned BEFORE new obstacle was known');
-    legend('Baseline','Unknown obstacle','Location','best');
+    legend('Location','best');
     nexttile;
     stairs(ts.Time,telemetry(:,7),'LineWidth',1.4);
     grid on; ylim([-0.2 3.3]); yticks(0:3);
