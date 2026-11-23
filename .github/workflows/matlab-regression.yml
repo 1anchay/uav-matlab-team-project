@@ -26,4 +26,4 @@ jobs:
       - name: New seven-module Advanced V2 tests
         uses: matlab-actions/run-command@v3
         with:
-          command: "run('tests/run_advanced_tests.m')"
+          command: "run('tests/run_advanced_tests.m'); run('tests/run_advanced_campaign_tests.m')"
