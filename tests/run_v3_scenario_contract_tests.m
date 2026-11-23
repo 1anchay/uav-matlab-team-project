@@ -13,7 +13,8 @@ for k=1:numel(names)
         'Scenario interface was not fixed-size.');
 end
 fprintf('[SC-01] Six independent fixed-size scenarios PASS\n');
-assert(v3_scenario_settings('two_unknown').world(3,2)>0, ...
+twoScenario=v3_scenario_settings('two_unknown');
+assert(twoScenario.world(3,2)>0, ...
     'Second circle must be a real physical obstacle.');
 fprintf('[SC-02] Real two-obstacle map PASS\n');
 world=[0 1000;0 1000;2 0];
