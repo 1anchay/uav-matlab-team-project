@@ -1,66 +1,41 @@
-# Интерфейсы взаимодействия семи модулей
+# Контракты сигналов 7 модулей UAV
 
-## №1 Navigation
-`subsystem_navigation(state,cfg) -> nav`
+Все длины — метры, скорость — м/с, ускорение — м/с², углы — радианы, батарея — %. Функции выполняются в MATLAB; схемы Simulink пока не содержат этих алгоритмов.
 
-- `nav.position [1x3]` — м;
-- `nav.velocity [1x3]` — м/с;
-- `nav.speed` — м/с;
-- `nav.course` — курс, рад;
-- `nav.altitude`, `nav.positionValid`, `nav.headingValid`.
+## 01 Навигация — Эрнест Карпухин
 
-## №3 Route Planning (до цикла)
-`subsystem_route_planning(startPos,goalPos,obstacles,cfg) -> route`
+`nav = subsystem_navigation(trueState, cfg, previousNav)`; последний аргумент необязателен.
 
-- `route [Nx3]` — набор waypoint;
-- `target [1x3]` — текущая цель для Flight Control, выбирается интегратором.
+Выход: `nav.position [1x3]`, `nav.velocity [1x3]`, `nav.speed`, `nav.altitude`, `nav.course`, `nav.yaw`, `nav.positionValid`, `nav.headingValid`, `nav.quality`, `nav.rawPosition`, `nav.rawVelocity`. `course` — курс скорости при движении; `yaw` — курс корпуса. `previousNav` используется как вход дискретного фильтра.
 
-## №4 Object Detection
-`subsystem_object_detection(nav,obstacles,cfg) -> detections`
+## 03 Маршрут — Богдан Лемченко
 
-Элемент массива: `name`, `distanceToBoundary`, `bearing`, `relativeXY [1x2]`, `isWarning`.
+`route = subsystem_route_planning(startPos, goalPos, obstacles, cfg)` до начала симуляции. Возвращает `route [N x 3]`, каждый сегмент проходит вне запретных кругов с дополнительным зазором `cfg.route.clearance`. Недопустимые точки и неудачное планирование приводят к исключению `UAV:RoutePlanning:InvalidEndpoint` и `UAV:RoutePlanning:UnsafeRoute`.
 
-## №2 Flight Control
-`subsystem_flight_control(nav,target,cfg) -> control`
+## 04 Обнаружение — Александр Дзедзей
 
-- `control.acceleration [1x3]` — м/с²;
-- `control.yawRate` — рад/с;
-- дополнительные поля: `target`, `desiredVelocity`, `positionError`.
+`detections = subsystem_object_detection(nav,obstacles,cfg)`. Массив структур с полями `name`, `distanceToBoundary`, `bearing`, `relativeXY [1x2]`, `isWarning`, `confidence`, `closingSpeed`, `timeToCollision`, `penetrationDepth`. При недостоверной навигации — пустые обнаружения.
 
-## №7 Energy
-`subsystem_energy(state,cfg) -> energy`
+## 02 Управление — Иван Живоглядов
 
-- `energy.currentBattery`, `energy.nextBattery` — %;
-- `energy.drainRate` — процентных пунктов в секунду;
-- `energy.estimatedRemainingSeconds` — с;
-- `energy.lowBattery`, `energy.criticalBattery` — логические флаги.
+`control = subsystem_flight_control(nav,targetWaypoint,cfg)`. Поля: `target`, `desiredVelocity [1x3]`, `acceleration [1x3]`, `yawRate`, `positionError [1x3]`, `distanceToTarget`.
 
-## №6 Flight Safety
-`[safeControl,safety] = subsystem_flight_safety(nav,detections,control,energy,cfg)`
+## 07 Энергия — Иван Касимов
 
-- `safeControl` — структура `control` с проверенными/скорректированными `acceleration` и `yawRate`;
-- `safety.status` — `OK`, `OBSTACLE_WARNING`, `OBSTACLE_AVOIDANCE`, `LOW_BATTERY`, `CRITICAL_BATTERY`;
-- `safety.intervened`, `safety.obstacleWarning`, `safety.nearestObstacleDistance`, `safety.lowBattery`, `safety.criticalBattery`.
+`energy = subsystem_energy(state,cfg,control)`; `control` необязателен. Поля `currentBattery`, `nextBattery`, `drainRate`, `lowBattery`, `criticalBattery`, `estimatedRemainingSeconds`, `predictedSpeed`. Время оценивается **до критического порога**, а не до полного разряда.
 
-## №5 Ground Station
-`subsystem_ground_station(nav,state,safeControl,waypointIndex,detections,cfg,safety,energy) -> packet`
+## 06 Безопасность — Артём Пучков
 
-Основные поля: `linkOK`, `position`, `altitude`, `speed`, `course`, `battery`, `waypointIndex`, `detectedObjects`, `commandedAcceleration`, `safetyStatus`, `batteryWarning`, `estimatedRemainingTime`.
+`[safeControl,safety] = subsystem_flight_safety(nav,detections,control,energy,cfg)`. `safeControl` сохраняет структуру команды; `acceleration` и `yawRate` могут измениться. Поля `safety`: `status`, `intervened`, `obstacleWarning`, `nearestObstacleDistance`, `predictedNearestDistance`, `predictedConflict`, `lowBattery`, `criticalBattery`, `navValid`. `status`: `OK`, `OBSTACLE_WARNING`, `OBSTACLE_AVOIDANCE`, `LOW_BATTERY`, `CRITICAL_BATTERY`, `NAV_INVALID`.
 
-Последние два аргумента (`safety`, `energy`) — **необязательные** для совместимости с прежним кодом.
+## 05 Наземная станция — Арсений Терехов
 
-## Общая Dynamics
-На шаге интеграции обновляет `state.position`, `state.velocity`, `state.yaw` из `safeControl` и `state.battery` из `energy.nextBattery`. Это общая модель, не участник №8.
+`packet = subsystem_ground_station(nav,state,safeControl,waypointIndex,detections,cfg,safety,energy)`. Последние два аргумента необязательны. Поля включают `linkOK`, `timeStamp`, `position`, `altitude`, `speed`, `course`, `battery`, `waypointIndex`, `detectedObjects`, `commandedAcceleration`, `safetyStatus`, `safetyIntervention`, `navValid`, `batteryWarning`, `criticalBattery`, `estimatedRemainingTime`.
 
-## Правило изменения интерфейса
-Любая замена названия или типа поля требует синхронного обновления интегратора, этого документа и тестов; изменения обсуждаются в Pull Request.
+## Общая динамика — интегратор
 
-## Расположение исходников
+`simulate_uav(scenario,route,cfg)` обновляет истинное состояние по `safeControl`, заряд по `energy.nextBattery`, логирует результаты. Не является восьмым модулем. Статусы `GOAL_REACHED`, `TIME_LIMIT`, `LOW_BATTERY`, `COLLISION`. Сценарий использует неподвижные круговые препятствия в XY. Динамическое перепланирование **не реализовано**: в архитектурной схеме поток обнаружений используется для контроля безопасности и телеметрии, а маршрут строится заранее.
 
-- **Эрнест Карпухин:** `team/01_Карпухин_Эрнест/subsystem_navigation.m`
-- **Иван Живоглядов:** `team/02_Живоглядов_Иван/subsystem_flight_control.m`
-- **Богдан Лемченко:** `team/03_Лемченко_Богдан/subsystem_route_planning.m`
-- **Александр Дзедзей:** `team/04_Дзедзей_Александр/subsystem_object_detection.m`
-- **Арсений Терехов:** `team/05_Терехов_Арсений/subsystem_ground_station.m`
-- **Артём Пучков:** `team/06_Пучков_Артём/subsystem_flight_safety.m`
-- **Иван Касимов:** `team/07_Касимов_Иван/subsystem_energy.m`
+## Управление изменениями
+
+При изменении поля обязательно обнови вызывающие функции, этот документ, тест и README соответствующего участника. Совместные изменения оформляй отдельным Pull Request.

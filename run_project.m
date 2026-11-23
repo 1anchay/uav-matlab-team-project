@@ -23,3 +23,7 @@ fprintf('Minimum obstacle-boundary distance: %.2f m\n', min(results.minObstacleD
 fprintf('Safety interventions: %d\n', sum(results.safetyIntervention));
 fprintf('Average battery drain rate: %.3f percentage points/s\n', mean(results.batteryDrainRate));
 fprintf('\nRun build_simulink_model for the architectural overview in Simulink.\n');
+
+fprintf('Valid navigation samples: %.1f %%\n',100*mean(results.navValid));
+fprintf('Predicted conflicts: %d\n',sum(results.predictedConflict));
+fprintf('Travel distance: %.1f m\n',results.travelDistance);

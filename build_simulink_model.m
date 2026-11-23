@@ -1,82 +1,63 @@
 function build_simulink_model()
-%BUILD_SIMULINK_MODEL Обзорная схема семи командных подсистем.
-% Эта блок-схема иллюстрирует интерфейсы, не заменяет simulate_uav.m.
+%BUILD_SIMULINK_MODEL Собирает обзорную архитектуру из Model Reference.
+% Каждый модуль хранится в отдельном .slx после build_component_models().
+% Это НЕ модель физических алгоритмов — рабочая симуляция: run_project.
 
-setup_paths();
+root = setup_paths();
 if ~license('test','Simulink')
-    error('Simulink is not available. run_project.m can still be used in MATLAB.');
+    error('UAV:MBD:MissingSimulink','Simulink license is required.');
+end
+models = build_component_models();
+outputDir = fullfile(root,'models','generated');
+mainName = 'UAV_Team_Model';
+targetFile = fullfile(outputDir,[mainName '.slx']);
+if exist(targetFile,'file')
+    load_system(targetFile);
+    open_system(mainName);
+    fprintf('Opened existing overview model (not overwritten): %s\n',targetFile);
+    return;
 end
 
-model = 'UAV_Team_Model';
-if bdIsLoaded(model), close_system(model, 0); end
-if exist([model '.slx'], 'file'), delete([model '.slx']); end
-new_system(model);
-open_system(model);
-set_param(model, 'StopTime', '120');
+new_system(mainName);
+cfg = config_uav();
+set_param(mainName,'Solver','FixedStepDiscrete','FixedStep',num2str(cfg.dt), ...
+    'StopTime',num2str(cfg.totalTime));
+add_ref(mainName,'Dynamics',models{8},[970 60 1180 140]);
+add_ref(mainName,'01 Navigation',models{1},[70 75 265 145]);
+add_ref(mainName,'04 Object Detection',models{4},[70 300 265 370]);
+add_ref(mainName,'03 Route Planning',models{3},[340 285 545 365]);
+add_ref(mainName,'02 Flight Control',models{2},[610 125 815 205]);
+add_ref(mainName,'07 Energy',models{7},[610 450 815 520]);
+add_ref(mainName,'06 Flight Safety',models{6},[970 245 1180 345]);
+add_ref(mainName,'05 Ground Station',models{5},[1320 400 1545 515]);
 
-% Общая модель динамики — НЕ восьмой участник
-make_subsystem(model, 'UAV Dynamics Environment', 1, 1, [940 40 1180 110]);
+% Учебная схема потоков. Блоки моделей передают только условный scalar.
+add_line(mainName,'Dynamics/1','01 Navigation/1','autorouting','on');
+add_line(mainName,'Dynamics/1','07 Energy/1','autorouting','on');
+add_line(mainName,'01 Navigation/1','04 Object Detection/1','autorouting','on');
+add_line(mainName,'01 Navigation/1','03 Route Planning/1','autorouting','on');
+add_line(mainName,'04 Object Detection/1','03 Route Planning/2','autorouting','on');
+add_line(mainName,'01 Navigation/1','02 Flight Control/1','autorouting','on');
+add_line(mainName,'03 Route Planning/1','02 Flight Control/2','autorouting','on');
+add_line(mainName,'02 Flight Control/1','06 Flight Safety/1','autorouting','on');
+add_line(mainName,'04 Object Detection/1','06 Flight Safety/2','autorouting','on');
+add_line(mainName,'07 Energy/1','06 Flight Safety/3','autorouting','on');
+add_line(mainName,'01 Navigation/1','06 Flight Safety/4','autorouting','on');
+add_line(mainName,'06 Flight Safety/1','Dynamics/1','autorouting','on');
+add_line(mainName,'01 Navigation/1','05 Ground Station/1','autorouting','on');
+add_line(mainName,'04 Object Detection/1','05 Ground Station/2','autorouting','on');
+add_line(mainName,'06 Flight Safety/1','05 Ground Station/3','autorouting','on');
+add_line(mainName,'07 Energy/1','05 Ground Station/4','autorouting','on');
+add_line(mainName,'Dynamics/1','05 Ground Station/5','autorouting','on');
 
-% Семь модулей: пять исходных + два новых
-make_subsystem(model, '1 Navigation',        1, 1, [100 80 300 150]);
-make_subsystem(model, '2 Flight Control',    2, 1, [590 120 800 200]);
-make_subsystem(model, '3 Route Planning',    2, 1, [330 240 540 320]);
-make_subsystem(model, '4 Object Detection',  1, 1, [100 270 300 350]);
-make_subsystem(model, '5 Ground Station',    5, 1, [940 460 1180 580]);
-make_subsystem(model, '6 Flight Safety',     4, 1, [940 210 1180 340]);
-make_subsystem(model, '7 Energy Management', 1, 1, [590 420 800 500]);
-
-% Расчётные сигналы (схема взаимодействия)
-add_line(model, 'UAV Dynamics Environment/1', '1 Navigation/1', 'autorouting','on');
-add_line(model, 'UAV Dynamics Environment/1', '7 Energy Management/1', 'autorouting','on');
-add_line(model, '1 Navigation/1', '2 Flight Control/1', 'autorouting','on');
-add_line(model, '1 Navigation/1', '4 Object Detection/1', 'autorouting','on');
-add_line(model, '1 Navigation/1', '3 Route Planning/1', 'autorouting','on');
-add_line(model, '4 Object Detection/1', '3 Route Planning/2', 'autorouting','on');
-add_line(model, '3 Route Planning/1', '2 Flight Control/2', 'autorouting','on');
-add_line(model, '2 Flight Control/1', '6 Flight Safety/1', 'autorouting','on');
-add_line(model, '4 Object Detection/1', '6 Flight Safety/2', 'autorouting','on');
-add_line(model, '7 Energy Management/1', '6 Flight Safety/3', 'autorouting','on');
-add_line(model, '1 Navigation/1', '6 Flight Safety/4', 'autorouting','on');
-add_line(model, '6 Flight Safety/1', 'UAV Dynamics Environment/1', 'autorouting','on');
-
-% Мониторинг
-add_line(model, '1 Navigation/1', '5 Ground Station/1', 'autorouting','on');
-add_line(model, '4 Object Detection/1', '5 Ground Station/2', 'autorouting','on');
-add_line(model, '6 Flight Safety/1', '5 Ground Station/3', 'autorouting','on');
-add_line(model, '7 Energy Management/1', '5 Ground Station/4', 'autorouting','on');
-add_line(model, 'UAV Dynamics Environment/1', '5 Ground Station/5', 'autorouting','on');
-
-% Не запускаем модель: расчёт реализован MATLAB-скриптом.
-save_system(model);
-open_system(model);
-fprintf('Created %s.slx (architecture overview for 7 modules)\n', model);
+save_system(mainName,targetFile);
+open_system(mainName);
+fprintf('Created overview Model References: %s\n',targetFile);
+fprintf('IMPORTANT: real UAV algorithms run in MATLAB via run_project.\n');
 end
 
-function make_subsystem(model, name, nIn, nOut, pos)
-path = [model '/' name];
-add_block('simulink/Ports & Subsystems/Subsystem', path, 'Position', pos);
-
-try delete_line(path, 'In1/1', 'Out1/1'); catch, end
-try delete_block([path '/In1']); catch, end
-try delete_block([path '/Out1']); catch, end
-
-for i = 1:nIn
-    add_block('simulink/Sources/In1', sprintf('%s/In%d', path, i), ...
-        'Position', [30 25+45*(i-1) 60 39+45*(i-1)]);
-end
-for i = 1:nOut
-    add_block('simulink/Sinks/Out1', sprintf('%s/Out%d', path, i), ...
-        'Position', [170 45+45*(i-1) 200 59+45*(i-1)]);
-end
-
-if nIn > 0 && nOut > 0
-    add_block('simulink/Signal Attributes/Signal Conversion', [path '/Interface'], ...
-        'Position', [95 25 135 55]);
-    add_line(path, 'In1/1', 'Interface/1');
-    add_line(path, 'Interface/1', 'Out1/1');
-end
-
-set_param(path, 'AttributesFormatString', ...
-    sprintf('Team subsystem\nInputs: %d Outputs: %d', nIn, nOut));
+function add_ref(parent,label,refName,position)
+path = [parent '/' label];
+add_block('simulink/Ports & Subsystems/Model',path, ...
+    'ModelName',refName,'Position',position);
 end

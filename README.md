@@ -80,3 +80,22 @@ uav-matlab-team-project/
 ## Документы
 
 [Архитектура и потоки данных](docs/TEAM_INTERACTION.md) · [Интерфейсы модулей](docs/INTERFACES.md) · [Задачи команды](TEAM_ASSIGNMENTS.md) · [Промпт для дальнейшей работы с ИИ](docs/AI_WORK_PROMPT.md)
+
+## Модельно-ориентированное проектирование: отдельные компоненты
+
+Преподаватель предоставил сравнение Virtual/Atomic Subsystem, Subsystem Reference и Model Reference. Для независимой разработки у каждого из 7 участников будут **отдельные Simulink-модели**. Скрипты генерируют их только в установленном MATLAB/Simulink:
+
+```matlab
+build_component_models
+build_simulink_model
+run('tests/run_simulink_smoke_tests.m')
+```
+
+**Важно:** эти `.slx` — пока архитектурные заглушки портов. Их генерируют для демонстрации структуры Model Reference, а не для расчёта полёта. Настоящие алгоритмы остаются в MATLAB-модулях. См. [models/README.md](models/README.md).
+
+## Верификация и учебные требования
+
+- Основные модульные и интеграционные проверки: `run('tests/run_tests.m')`.
+- Опциональная проверка структуры Model Reference: `run('tests/run_simulink_smoke_tests.m')`.
+- Прослеживаемость требований: [docs/REQUIREMENTS_AND_TESTS.md](docs/REQUIREMENTS_AND_TESTS.md).
+- Ограничение: безопасность и физическая достоверность реального БПЛА не подтверждены.
