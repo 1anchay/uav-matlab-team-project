@@ -192,3 +192,23 @@ Advanced V2 campaign acceptance: 6/6 PASS
 зафиксирован **успешный** MATLAB regression workflow (run #8); он не
 доказывает работоспособность новых V3-моделей. Результаты новых испытаний
 должны фиксироваться здесь отдельно с полными логами.
+
+## V3 MATLAB-only CI — подтверждён PASS, 23.11.2026
+
+В GitHub Actions `MATLAB regression — seven UAV modules`, run **#9**
+(зафиксированный run ID `45167864440`, job `137669405766`) прошёл
+полный job со статусом **success**. Из фактического журнала:
+
+```text
+Mission Lifecycle Supervisor unit tests: 6/6 PASS
+Advanced V2 acceptance suite: 13/13 PASS
+Advanced V2 campaign acceptance: 6/6 PASS
+V3 algorithm unit tests: 6/6 PASS
+V2 robustness smoke tests: 4/4 measured runs PASS
+```
+
+**Важно:** CI выполнял **только MATLAB-алгоритмы V3** и быстрый тест
+исследования устойчивости; новая `UAV3_Team_Model.slx` **не создавалась
+и не симулировалась в этом job**. Это подтверждает модульный код и регрессию,
+но не даёт статуса PASS четырём интеграционным Simulink-этапам V3-A–D.
+Нужна проверка MATLAB Online.
