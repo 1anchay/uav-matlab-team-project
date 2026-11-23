@@ -65,6 +65,21 @@ run('tests/run_functional_simulink_tests.m')
 
 Предупреждение MathWorks `rpiutils.internal.getLinuxRoot` относится к отдельной регистрации Raspberry Pi toolchain, а не к причине ошибки `Obstacles`. Если после исправления размеров возникнет другая ошибка, сохрани её полный текст.
 
+## Исправление алгебраической петли (`Waypoint Planning` / `Dynamics`)
+
+В Simulink Model Reference возможно трактовать часть выходов как `direct feedthrough`. При наличии внутреннего `persistent waypointIndex` это вызвало ошибку алгебраической петли, несмотря на задержку внутри Dynamics. Исправление добавляет **явный Unit Delay на уровне UAVF_Team_Model** между состоянием Dynamics и входами модулей Navigation/Energy. Это означает дополнительный шаг задержки оценки для контроллера (0,1 с), который необходимо учитывать в интерпретации результатов.
+
+Для существующей локально собранной схемы после получения исправленного кода:
+
+```matlab
+repair_functional_feedback
+set_param('UAVF_Team_Model','SimulationCommand','update')
+run_functional_demo
+run('tests/run_functional_simulink_tests.m')
+```
+
+`repair_functional_feedback` **не удаляет** сгенерированные модели и делает копию верхнеуровневого `.slx` в `models/functional/backups/` перед изменением. В новых сборках генератор сразу создаёт этот Unit Delay.
+
 ## Воспроизводимость и безопасность файлов
 
 Генератор **не перезаписывает существующие .slx**. Если нужно обновить исходники модели и пересоздать файлы, сначала сохраните их резервную копию или переименуйте папку `models/functional/generated/` вручную. Старые `models/generated/UAV_*.slx` остаются без изменений.

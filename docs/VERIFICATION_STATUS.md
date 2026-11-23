@@ -46,3 +46,7 @@ run('tests/run_functional_simulink_tests.m')
 ## Исправление по результатам MATLAB Online
 
 При первом запуске нового функционального прототипа MATLAB Online выдал `Array element 3 is out-of-bounds` при разборе `UAVF_Detection_04/Algorithm`; источник — отсутствие фиксированного размера внешних входных портов Model Reference. Генератор дополнен `PortDimensions`, добавлен `repair_functional_ports.m` для уже сгенерированных файлов и проверка контракта входов. **Повторное исполнение и статус PASS ожидаются.**
+
+## Исправление алгебраической петли
+
+После успешного `repair_functional_ports` MATLAB Online сообщил алгебраическую петлю между Waypoint Planning и Dynamics/Navigation/Energy/Control/Safety. В существующую схему нужно добавить явный `State Feedback Delay` на верхнем уровне; это реализовано отдельной функцией `repair_functional_feedback.m` с резервной копией. Генератор новых схем дополнен тем же блоком. **Повторная компиляция и фактическая успешная миссия ещё не подтверждены.**

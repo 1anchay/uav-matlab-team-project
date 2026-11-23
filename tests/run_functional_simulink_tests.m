@@ -52,7 +52,21 @@ for k = 1:numel(modelNames)
             modelNames{k},inports{k}{j},actual,wanted);
     end
 end
-fprintf('[A] 8 executable references and fixed input dimensions verified.\n');
+% Требуется явная задержка на верхнем уровне в контуре Model Reference:
+% без неё persistent waypoint может попасть в алгебраическую петлю.
+feedbackDelay = [main '/State Feedback Delay'];
+assert(getSimulinkBlockHandle(feedbackDelay) ~= -1, ...
+    'Missing top-level Unit Delay in the flight feedback loop.');
+assert(strcmp(get_param(feedbackDelay,'BlockType'),'UnitDelay'), ...
+    'State feedback must pass through Unit Delay.');
+navPort = get_param([main '/01 Navigation'],'PortHandles');
+energyPort = get_param([main '/07 Energy'],'PortHandles');
+feedbackPort = get_param(feedbackDelay,'PortHandles');
+assert(get_param(get_param(navPort.Inport(1),'Line'),'SrcPortHandle') == ...
+    feedbackPort.Outport(1), 'Navigation bypasses feedback delay');
+assert(get_param(get_param(energyPort.Inport(1),'Line'),'SrcPortHandle') == ...
+    feedbackPort.Outport(1), 'Energy bypasses feedback delay');
+fprintf('[A] 8 Model References, port dimensions and feedback delay verified.\n');
 
 set_param(main,'SimulationCommand','update');
 fprintf('[B] Simulink diagram compiled.\n');

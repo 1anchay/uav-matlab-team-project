@@ -12,7 +12,7 @@
 
 ## 3. Новый функциональный Simulink-прототип (XY)
 
-`build_functional_simulink_model.m` создаёт **новые** модели `UAVF_*.slx` и `UAVF_Team_Model.slx`. В каждой из семи независимых моделей находятся MATLAB Function-блоки с рабочими алгоритмами. Общая динамика — отдельный Model Reference с `Unit Delay`.
+`build_functional_simulink_model.m` создаёт **новые** модели `UAVF_*.slx` и `UAVF_Team_Model.slx`. В каждой из семи независимых моделей находятся MATLAB Function-блоки с рабочими алгоритмами. Общая динамика — отдельный Model Reference с `Unit Delay`; дополнительный `State Feedback Delay` находится на верхнем уровне, чтобы исключить алгебраическую петлю между блоками-ссылками.
 
 ```mermaid
 flowchart LR

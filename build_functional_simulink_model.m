@@ -7,7 +7,8 @@ function modelFile = build_functional_simulink_model()
 % исходный полноценнее описанный MATLAB-проект в XYZ.
 %
 % ВНИМАНИЕ: существующие файлы моделей НЕ ПЕРЕЗАПИСЫВАЮТСЯ.
-% Для существующих .slx: repair_functional_ports (с резервной копией).
+% Для существующих .slx: repair_functional_ports и repair_functional_feedback
+% (каждый делает резервную копию перед изменением).
 %
 % Из корня проекта: build_functional_simulink_model
 
@@ -85,9 +86,17 @@ add_reference(main,'04 Object Detection',spec{4,1},[350 345 565 420]);
 add_reference(main,'07 Energy',spec{7,1},[625 345 840 420]);
 add_reference(main,'05 Ground Station',spec{5,1},[925 455 1160 555]);
 
-% Контур движения: Unit Delay в Dynamics разрывает алгебраическую петлю.
-wire(main,'Dynamics/1','01 Navigation/1','true state');
-wire(main,'Dynamics/1','07 Energy/1','battery + velocity');
+% В Model Reference возможна консервативная оценка direct feedthrough.
+% Поэтому разрываем обратную связь НА ВЕРХНЕМ УРОВНЕ модели: явная задержка
+% состояния для навигации и энергосистемы. Dynamics ведёт своё состояние.
+add_block('simulink/Discrete/Unit Delay', ...
+    [main '/State Feedback Delay'], ...
+    'InitialCondition','[0;0;0;0;100]', ...
+    'SampleTime',num2str(cfg.dt), ...
+    'Position',[1480 335 1535 380]);
+wire(main,'Dynamics/1','State Feedback Delay/1','true state');
+wire(main,'State Feedback Delay/1','01 Navigation/1','previous state');
+wire(main,'State Feedback Delay/1','07 Energy/1','battery + velocity');
 wire(main,'01 Navigation/1','03 Waypoint Planning/1','estimated nav');
 wire(main,'Planned Waypoints/1','03 Waypoint Planning/2','route XY');
 wire(main,'01 Navigation/1','02 Flight Control/1','nav');
