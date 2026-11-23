@@ -161,8 +161,11 @@ for step = 1:steps
     newPosition(3) = max(cfg.minAltitude,min(cfg.maxAltitude,newPosition(3)));
     for k=1:numel(scenario.obstacles)
         obs = scenario.obstacles(k);
-        if segment_circle_clearance(state.position(1:2), ...
-                newPosition(1:2),obs.center) <= obs.radius
+        % Segment clearance (not only sampled endpoints) catches tunnelling.
+        segmentClearance = segment_circle_clearance( ...
+            state.position(1:2),newPosition(1:2),obs.center)-obs.radius;
+        obstacleDistance(step) = min(obstacleDistance(step),segmentClearance);
+        if segmentClearance <= 0
             status = 'COLLISION';
         end
     end
