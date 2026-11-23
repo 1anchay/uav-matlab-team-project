@@ -1,63 +1,82 @@
-# UAV MATLAB / Simulink Team Project
+# UAV MATLAB / Simulink — командный проект БПЛА
 
-Небольшой учебный проект по модельно-ориентированному проектированию БПЛА. Код разделён между **5 участниками**, но собирается в один общий продукт.
+**7 участников · 7 модулей · 1 общая симуляция**
 
-## Команда
+Учебный проект по модельно-ориентированному проектированию автономного БПЛА. Утверждённое распределение ролей зафиксировано в [TEAM_ASSIGNMENTS.md](TEAM_ASSIGNMENTS.md), а связи между модулями — в [схеме архитектуры](docs/TEAM_INTERACTION.md).
 
-| Участник | Подсистема |
-|---|---|
-| Ernesto Horserofl | Навигация и ориентирование |
-| Иван Живоглядов | Управление полётом |
-| Бодя Лемченко | Построение маршрута |
-| Александр Лзедзей | Обнаружение объектов |
-| Арсений Терехов | Связь и наземная станция |
+## Участники и модули
 
-Подробности: [`TEAM_ASSIGNMENTS.md`](TEAM_ASSIGNMENTS.md).
+| № | Разработчик | Функция | Исходный код |
+|---|---|---|---|
+| 01 | Эрнест Карпухин | Навигация и ориентирование | [`subsystem_navigation.m`](team/01_Карпухин_Эрнест/subsystem_navigation.m) |
+| 02 | Иван Живоглядов | Управление полётом | [`subsystem_flight_control.m`](team/02_Живоглядов_Иван/subsystem_flight_control.m) |
+| 03 | Богдан Лемченко | Планирование маршрута | [`subsystem_route_planning.m`](team/03_Лемченко_Богдан/subsystem_route_planning.m) |
+| 04 | Александр Дзедзей | Обнаружение объектов | [`subsystem_object_detection.m`](team/04_Дзедзей_Александр/subsystem_object_detection.m) |
+| 05 | Арсений Терехов | Связь и наземная станция | [`subsystem_ground_station.m`](team/05_Терехов_Арсений/subsystem_ground_station.m) |
+| 06 | Артём Пучков | Контроль безопасности | [`subsystem_flight_safety.m`](team/06_Пучков_Артём/subsystem_flight_safety.m) |
+| 07 | Иван Касимов | Энергосистема и батарея | [`subsystem_energy.m`](team/07_Касимов_Иван/subsystem_energy.m) |
 
-![Архитектура команды](docs/team_architecture.png)
+Общая модель динамики БПЛА — **не восьмой модуль**. Она объединяет работу команды в `simulate_uav.m`.
 
-## Как устроен проект
-- `team/` — пять персональных папок и пять основных MATLAB-функций;
-- `simulate_uav.m` — интеграция подсистем;
-- `config_uav.m` — общие параметры;
-- `run_project.m` — единая точка запуска;
-- `build_simulink_model.m` — создание обзорной модели Simulink;
-- `tests/` — общие проверки;
-- `docs/` — архитектура и интерфейсы;
-- `bootstrap_github.ps1` — создание общего публичного GitHub repo и персональных веток.
+## Быстрый запуск
 
-## Запуск в MATLAB
-Откройте корень проекта как Current Folder и выполните:
+Требуется MATLAB. Открой корень репозитория как *Current Folder* и выполни:
 
 ```matlab
 run_project
-```
-
-Тесты:
-
-```matlab
 run('tests/run_tests.m')
 ```
 
-Simulink:
+Для создания **обзорной архитектурной** схемы в Simulink:
 
 ```matlab
 build_simulink_model
 ```
 
-## Совместная работа
-`main` — общий продукт. Каждый участник работает в своей ветке и своей папке, затем делает Pull Request в `main`.
+> Simulink-модель демонстрирует интерфейсы и расположение модулей. Расчёты полёта выполняются в MATLAB, не внутри диаграммы Simulink.
 
-Подробная инструкция: [`CONTRIBUTING.md`](CONTRIBUTING.md).
+## Структура репозитория
 
-## Создать публичный GitHub-репозиторий
-На Windows запустите:
-
-```powershell
-Set-ExecutionPolicy -Scope Process Bypass
-.\bootstrap_github.ps1
+```text
+uav-matlab-team-project/
+├── team/
+│   ├── 01_Карпухин_Эрнест/
+│   │   ├── README.md
+│   │   └── subsystem_navigation.m
+│   ├── 02_Живоглядов_Иван/
+│   │   ├── README.md
+│   │   └── subsystem_flight_control.m
+│   ├── 03_Лемченко_Богдан/
+│   │   ├── README.md
+│   │   └── subsystem_route_planning.m
+│   ├── 04_Дзедзей_Александр/
+│   │   ├── README.md
+│   │   └── subsystem_object_detection.m
+│   ├── 05_Терехов_Арсений/
+│   │   ├── README.md
+│   │   └── subsystem_ground_station.m
+│   ├── 06_Пучков_Артём/
+│   │   ├── README.md
+│   │   └── subsystem_flight_safety.m
+│   ├── 07_Касимов_Иван/
+│   │   ├── README.md
+│   │   └── subsystem_energy.m
+├── simulate_uav.m             # Общая динамика и интеграция
+├── config_uav.m               # Конфигурация
+├── setup_paths.m              # Подключение семи личных папок
+├── run_project.m              # Точка запуска
+├── build_simulink_model.m     # Обзорная модель Simulink
+├── tests/run_tests.m          # MATLAB-тесты
+├── docs/                      # Архитектура и интерфейсы
+└── TEAM_ASSIGNMENTS.md        # Ответственные и ветки
 ```
 
-Скрипт рассчитан на GitHub-владельца `1anchay` и имя репозитория `uav-matlab-team-project`.
+## Как работать в команде
 
-> Для выдачи права записи нужны **GitHub usernames** участников. Обычных имён из ВК для этого недостаточно.
+Каждый пишет код в **своей именной папке** и персональной ветке. В `main` изменения попадают только через Pull Request и проверку другими участниками. Инструкции: [CONTRIBUTING.md](CONTRIBUTING.md) · [GITHUB_SETUP.md](GITHUB_SETUP.md).
+
+**Публичный репозиторий ≠ доступ на запись.** Для прямого `push` владелец должен пригласить каждый GitHub-аккаунт как collaborator с разрешением `Write`; без него можно предложить изменения через Fork → Pull Request.
+
+## Документы
+
+[Архитектура и потоки данных](docs/TEAM_INTERACTION.md) · [Интерфейсы модулей](docs/INTERFACES.md) · [Задачи команды](TEAM_ASSIGNMENTS.md) · [Промпт для дальнейшей работы с ИИ](docs/AI_WORK_PROMPT.md)

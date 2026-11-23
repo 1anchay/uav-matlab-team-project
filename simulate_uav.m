@@ -1,5 +1,5 @@
 function results = simulate_uav(scenario, route, cfg)
-%SIMULATE_UAV Интеграция пяти подсистем вокруг упрощенной модели БПЛА.
+%SIMULATE_UAV Интеграция семи подсистем и упрощенной динамики БПЛА.
 
 state = scenario.initialState;
 N = floor(cfg.totalTime / cfg.dt) + 1;
@@ -15,34 +15,44 @@ linkOK = false(N,1);
 detectionCount = zeros(N,1);
 waypointIndexLog = nan(N,1);
 minObstacleDistance = nan(N,1);
+batteryDrainRate = nan(N,1);
+estimatedRemainingTime = nan(N,1);
+safetyIntervention = false(N,1);
+safetyStatus = cell(N,1);
 
 waypointIndex = min(2, size(route,1));
 finishIndex = N;
 status = 'TIME_LIMIT';
 
 for i = 1:N
-    % 1) Навигация
+    % 1. Навигация
     nav = subsystem_navigation(state, cfg);
 
-    % 4) Обнаружение объектов
+    % 4. Обнаружение препятствий
     detections = subsystem_object_detection(nav, scenario.obstacles, cfg);
 
-    % 3) Планировщик уже создал безопасный набор контрольных точек.
-    % На каждом шаге выбирается текущая цель маршрута.
+    % 3. Маршрут заранее рассчитан; выбираем очередную точку
     target = route(waypointIndex,:);
     if norm(nav.position - target) <= cfg.waypointTolerance && waypointIndex < size(route,1)
         waypointIndex = waypointIndex + 1;
         target = route(waypointIndex,:);
     end
 
-    % 2) Управление полетом
+    % 2. Первичная команда управления
     control = subsystem_flight_control(nav, target, cfg);
 
-    % 5) Наземная станция/канал связи
-    packet = subsystem_ground_station(nav, state, control, waypointIndex, detections, cfg);
+    % 7. Энергосистема
+    energy = subsystem_energy(state, cfg);
+
+    % 6. Контроль безопасности и корректировка команд
+    [safeControl, safety] = subsystem_flight_safety(nav, detections, control, energy, cfg);
+
+    % 5. Телеметрия с дополнительными статусами безопасности/батареи
+    packet = subsystem_ground_station(nav, state, safeControl, waypointIndex, ...
+        detections, cfg, safety, energy);
     packet.timeStamp = time(i); %#ok<NASGU>
 
-    % Логирование до изменения состояния
+    % Логирование состояния до интеграционного шага
     pos(i,:) = state.position;
     vel(i,:) = state.velocity;
     yaw(i) = state.yaw;
@@ -52,35 +62,40 @@ for i = 1:N
     linkOK(i) = packet.linkOK;
     detectionCount(i) = numel(detections);
     waypointIndexLog(i) = waypointIndex;
+    batteryDrainRate(i) = energy.drainRate;
+    estimatedRemainingTime(i) = energy.estimatedRemainingSeconds;
+    safetyIntervention(i) = safety.intervened;
+    safetyStatus{i} = safety.status;
 
     distances = zeros(1,numel(scenario.obstacles));
     for k = 1:numel(scenario.obstacles)
-        distances(k) = norm(state.position(1:2) - scenario.obstacles(k).center) - scenario.obstacles(k).radius;
+        distances(k) = norm(state.position(1:2) - scenario.obstacles(k).center) - ...
+            scenario.obstacles(k).radius;
     end
-    minObstacleDistance(i) = min(distances);
+    if isempty(distances)
+        minObstacleDistance(i) = inf;
+    else
+        minObstacleDistance(i) = min(distances);
+    end
 
-    % Критерий выполнения миссии
     if norm(state.position - scenario.goal) <= cfg.goalTolerance
         status = 'GOAL_REACHED';
         finishIndex = i;
         break;
     end
-    if state.battery <= 5
+    if state.battery <= cfg.safety.criticalBatteryPercent
         status = 'LOW_BATTERY';
         finishIndex = i;
         break;
     end
 
-    % Упрощенная динамика аппарата: интегрирование ускорения и скорости.
-    state.velocity = state.velocity + control.acceleration * cfg.dt;
+    % Общая модель движения (не отдельный участник)
+    state.velocity = state.velocity + safeControl.acceleration * cfg.dt;
     state.velocity = limit_norm(state.velocity, cfg.maxSpeed);
     state.position = state.position + state.velocity * cfg.dt;
     state.position(3) = max(cfg.minAltitude, min(cfg.maxAltitude, state.position(3)));
-    state.yaw = wrap_angle(state.yaw + control.yawRate * cfg.dt);
-
-    % Расход батареи зависит от времени и интенсивности движения.
-    drain = cfg.battery.baseDrainPerSecond + cfg.battery.motionDrainFactor * norm(state.velocity);
-    state.battery = max(0, state.battery - drain * cfg.dt);
+    state.yaw = wrap_angle(state.yaw + safeControl.yawRate * cfg.dt);
+    state.battery = energy.nextBattery;
 end
 
 idx = 1:finishIndex;
@@ -95,6 +110,10 @@ results.linkOK = linkOK(idx);
 results.detectionCount = detectionCount(idx);
 results.waypointIndex = waypointIndexLog(idx);
 results.minObstacleDistance = minObstacleDistance(idx);
+results.batteryDrainRate = batteryDrainRate(idx);
+results.estimatedRemainingTime = estimatedRemainingTime(idx);
+results.safetyIntervention = safetyIntervention(idx);
+results.safetyStatus = safetyStatus(idx);
 results.status = status;
 results.route = route;
 results.finalPosition = pos(finishIndex,:);

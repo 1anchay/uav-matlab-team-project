@@ -1,13 +1,15 @@
 function root = setup_paths()
-%SETUP_PATHS Добавляет общие и персональные папки команды в MATLAB path.
-% Каждый участник редактирует функцию только в своей папке team/.
+%SETUP_PATHS Подключает семь личных папок участников MATLAB-проекта.
+% Функции подсистем находятся строго в одном экземпляре каждая.
 
 root = fileparts(mfilename('fullpath'));
 addpath(root);
-addpath(fullfile(root, 'team', '01_ernesto_horserofl_navigation'));
-addpath(fullfile(root, 'team', '02_ivan_zhivoglyadov_flight_control'));
-addpath(fullfile(root, 'team', '03_bodya_lemchenko_route_planning'));
-addpath(fullfile(root, 'team', '04_aleksandr_lzedzei_object_detection'));
-addpath(fullfile(root, 'team', '05_arseniy_terekhov_ground_station'));
+addpath(fullfile(root, 'team', '01_Карпухин_Эрнест'));
+addpath(fullfile(root, 'team', '02_Живоглядов_Иван'));
+addpath(fullfile(root, 'team', '03_Лемченко_Богдан'));
+addpath(fullfile(root, 'team', '04_Дзедзей_Александр'));
+addpath(fullfile(root, 'team', '05_Терехов_Арсений'));
+addpath(fullfile(root, 'team', '06_Пучков_Артём'));
+addpath(fullfile(root, 'team', '07_Касимов_Иван'));
 addpath(fullfile(root, 'tests'));
 end
