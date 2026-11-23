@@ -17,3 +17,6 @@ Thumbs.db
 
 # Local backup copies created by repair_functional_ports
 models/functional/backups/
+
+# Reproducible local outputs from Advanced V2
+results/v2/
