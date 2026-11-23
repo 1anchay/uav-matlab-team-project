@@ -38,3 +38,18 @@ GOAL_REACHED, 1 replan, 11.75 м до круга и завершение за 22
 
 Отдельно испытать сценарий с двумя объектами, чтобы не экстраполировать
 успешный one-circle сценарий на любые карты.
+
+## Дополнительные критерии перед защитой — pending
+
+| ID | Новая проверка | Файл | Статус |
+|---|---|---|---|
+| R-17 | Два физических скрытых круга в Simulink | `run_v3_scenario('two_unknown')` | implemented, pending |
+| R-18 | Коллизия при старте → код 2 | `run_v3_scenario('collision_at_start')` | implemented, pending |
+| R-19 | Критический заряд → код 3 | `run_v3_scenario('critical_battery')` | implemented, pending |
+| R-20 | Невалидное состояние → код 4 | `run_v3_scenario('invalid_state')` | implemented, pending |
+| R-21 | Начало на цели → код 1 | `run_v3_scenario('goal_at_start')` | implemented, pending |
+| R-22 | Сегментная проверка зазора | `v3_swept_clearance.m` | unit test pending |
+
+Тест `run('tests/run_v3_extended_integration_tests.m')` проверяет
+новые требования; его результат не предсказан заранее. Запуск
+`run_v3_acceptance_campaign` сообщает о FAIL и ERROR, а не маскирует их.

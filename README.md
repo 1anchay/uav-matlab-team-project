@@ -184,3 +184,23 @@ run_defense_showcase(false)
 **CI V3 MATLAB-only:** подтверждены unit-тесты 6/6 и quick robustness
 4/4 в GitHub Actions (run ID 45167864440). **Это не проверка новой V3
 Simulink-модели.** Отдельно запустить `tests/run_v3_simulink_tests.m`.
+
+## V3 — расширенные испытания перед защитой (следующий этап)
+
+В экспериментальной ветке `feature/v3-fault-injection-defense-readiness-20261123`
+новый `run_v3_scenario` использует `Simulink.SimulationInput` для
+разовых параметров испытаний **без изменения исходных .slx**.
+
+```matlab
+run('tests/run_v3_scenario_contract_tests.m')
+campaign = run_v3_acceptance_campaign(true);
+export_v3_acceptance_report(campaign)
+run('tests/run_v3_extended_integration_tests.m')
+```
+
+Сценарии: baseline, two_unknown, collision_at_start, critical_battery,
+invalid_state и goal_at_start. **Новые Simulink-сценарии ожидают
+фактической проверки**, старые 4/4 PASS остаются отдельным подтверждённым
+результатом. Подробности: [V3 Extended Validation](docs/V3_EXTENDED_VALIDATION.md).
+
+Перед презентацией: [план завершения проекта](docs/DEFENSE_FINALIZATION_PLAN.md).

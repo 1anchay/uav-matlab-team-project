@@ -98,3 +98,17 @@ CSV/Markdown V2 хранятся отдельно в `results/v2/unexpected/`.
 - [ ] На графиках подписаны единицы и показана достоверная шкала.
 - [ ] Сохранены журналы/скриншоты в GitHub.
 - [ ] Ревью от всех семи участников; только затем merge родительских PR.
+
+## 7. Новая расширенная V3 перед финальными слайдами
+
+```matlab
+run('tests/run_v3_scenario_contract_tests.m')
+campaign = run_v3_acceptance_campaign(true);
+export_v3_acceptance_report(campaign)
+run('tests/run_v3_extended_integration_tests.m')
+```
+
+Это **новая** интеграционная серия: 2 препятствия и терминальные состояния.
+Пока не проверено в MATLAB Online, поэтому не добавлять новые PASS на
+слайды и не сливать ветку автоматически. Отчёт сохраняет также FAIL/ERROR.
+См. [план готовности к защите](DEFENSE_FINALIZATION_PLAN.md).

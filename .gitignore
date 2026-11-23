@@ -24,3 +24,6 @@ results/v2/
 # Local reproducible teaching evidence; publish selected reviewed files later
 results/robustness/
 results/defense/
+
+# New non-destructive V3 fault-injection results
+results/v3/
