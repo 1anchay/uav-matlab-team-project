@@ -7,7 +7,7 @@ function modelFile = build_functional_simulink_model()
 % исходный полноценнее описанный MATLAB-проект в XYZ.
 %
 % ВНИМАНИЕ: существующие файлы моделей НЕ ПЕРЕЗАПИСЫВАЮТСЯ.
-% Для повторной генерации сохраните/переименуйте старые .slx вручную.
+% Для существующих .slx: repair_functional_ports (с резервной копией).
 %
 % Из корня проекта: build_functional_simulink_model
 
@@ -50,9 +50,12 @@ spec = { ...
         fullfile(root,'models','functional','dynamics_step.m') ...
     };
 
+% Явно задаём размеры сигналов на границах Model Reference.
+% Без этого Simulink может принять входы за скаляры (ошибка obstacles(3,k)).
+portSizes = functional_port_dimensions(size(routeXY,2),size(obstacleXY,2));
 for k = 1:size(spec,1)
     make_reference_model(spec{k,1},spec{k,2},spec{k,3},spec{k,4}, ...
-        outDir,cfg.dt,k == 1,k == 8);
+        outDir,cfg.dt,k == 1,k == 8,portSizes{k});
 end
 
 main = 'UAVF_Team_Model';
@@ -122,7 +125,7 @@ fprintf('Created EXECUTABLE 2D Model Reference diagram: %s\n',modelFile);
 fprintf('Run run_functional_demo for numerical results and graphs.\n');
 end
 
-function make_reference_model(name,ins,outs,sourceFile,outDir,dt,isNav,isDynamics)
+function make_reference_model(name,ins,outs,sourceFile,outDir,dt,isNav,isDynamics,inputSizes)
 file = fullfile(outDir,[name '.slx']);
 if exist(file,'file')
     load_system(file);
@@ -137,6 +140,7 @@ set_param(name,'Solver','FixedStepDiscrete','FixedStep',num2str(dt));
 for k = 1:numel(ins)
     add_block('simulink/Sources/In1',[name '/' ins{k}], ...
         'Port',num2str(k), ...
+        'PortDimensions',inputSizes{k},'OutDataTypeStr','double', ...
         'Position',[30 45+70*(k-1) 85 65+70*(k-1)]);
 end
 for k = 1:numel(outs)
