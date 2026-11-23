@@ -43,7 +43,19 @@ assert(r.minBattery >= 0 && r.minBattery <= 100, ...
 assert(all(diff(r.state(:,5)) <= 1e-7), ...
     'Battery should never increase in this scenario');
 assert(r.maxSpeed <= 10 + 1e-6,'Velocity limit violated');
-fprintf('[C] Simulation data/limits passed.\n');
+
+% Проверяем фактическую траекторию относительно физических кругов препятствий.
+cfg = config_uav();
+scenario = init_scenario(cfg);
+for k = 1:numel(scenario.obstacles)
+    obs = scenario.obstacles(k);
+    dx = r.state(:,1)-obs.center(1);
+    dy = r.state(:,2)-obs.center(2);
+    clearance = sqrt(dx.^2+dy.^2)-obs.radius;
+    assert(all(clearance > 0), ...
+        'Simulink trajectory intersects obstacle %d',k);
+end
+fprintf('[C] Simulation data, limits and collision checks passed.\n');
 
 % Fail explicitly if the reference mission is incomplete.
 assert(r.goalReached, ...

@@ -99,3 +99,17 @@ run('tests/run_simulink_smoke_tests.m')
 - Опциональная проверка структуры Model Reference: `run('tests/run_simulink_smoke_tests.m')`.
 - Прослеживаемость требований: [docs/REQUIREMENTS_AND_TESTS.md](docs/REQUIREMENTS_AND_TESTS.md).
 - Ограничение: безопасность и физическая достоверность реального БПЛА не подтверждены.
+
+## Исполняемая Simulink-модель (отдельный вариант)
+
+Помимо обзорной архитектуры `UAV_Team_Model`, теперь есть **функциональный 2D-прототип** с семью настоящими MATLAB Function-модулями в независимых Model Reference:
+
+```matlab
+build_functional_simulink_model
+run_functional_demo
+run('tests/run_functional_simulink_tests.m')
+```
+
+Это **не та же модель**, что MATLAB-симуляция `run_project`: она упрощена до 2D, использует маршрут, заранее построенный MATLAB-планировщиком, и имитирует круговые препятствия. Подробнее: [модель и ограничения](models/functional/README.md), [этапы разработки](docs/IMPLEMENTATION_ROADMAP.md), [план защиты](docs/DEFENSE_GUIDE.md).
+
+**Проверка новой модели в MATLAB Online ещё не выполнена**; до успешного выполнения тестов не объединяйте соответствующий PR с интеграционной веткой.
