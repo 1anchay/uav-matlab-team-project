@@ -16,6 +16,7 @@ navPos = nan(N,3);
 navSpeed = nan(N,1);
 navValid = false(N,1);
 linkOK = false(N,1);
+telemetryPackets = cell(N,1);
 detectionCount = zeros(N,1);
 waypointIndexLog = nan(N,1);
 minObstacleDistance = nan(N,1);
@@ -51,6 +52,8 @@ for i = 1:N
 
     % 06: безопасная команда и предупреждения; 05: телеметрия
     [safeControl, safety] = subsystem_flight_safety(nav, detections, control, energy, cfg);
+    % Расход пересчитываем после коррекции команды модулем безопасности.
+    energy = subsystem_energy(state, cfg, safeControl);
     packet = subsystem_ground_station(nav, state, safeControl, waypointIndex, ...
         detections, cfg, safety, energy);
     packet.timeStamp = time(i); %#ok<NASGU>
@@ -63,6 +66,9 @@ for i = 1:N
     navSpeed(i) = nav.speed;
     navValid(i) = safety.navValid;
     linkOK(i) = packet.linkOK;
+    if packet.linkOK
+        telemetryPackets{i} = packet;
+    end
     detectionCount(i) = numel(detections);
     waypointIndexLog(i) = waypointIndex;
     batteryDrainRate(i) = energy.drainRate;
@@ -118,6 +124,7 @@ results.navPosition = navPos(idx,:);
 results.navSpeed = navSpeed(idx);
 results.navValid = navValid(idx);
 results.linkOK = linkOK(idx);
+results.telemetryPackets = telemetryPackets(idx);
 results.detectionCount = detectionCount(idx);
 results.waypointIndex = waypointIndexLog(idx);
 results.minObstacleDistance = minObstacleDistance(idx);
