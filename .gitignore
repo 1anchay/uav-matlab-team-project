@@ -20,3 +20,7 @@ models/functional/backups/
 
 # Reproducible local outputs from Advanced V2
 results/v2/
+
+# Local reproducible teaching evidence; publish selected reviewed files later
+results/robustness/
+results/defense/
