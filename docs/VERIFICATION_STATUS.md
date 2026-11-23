@@ -65,3 +65,12 @@ run('tests/run_functional_simulink_tests.m')
 ## Исправление алгебраической петли
 
 После успешного `repair_functional_ports` MATLAB Online сообщил алгебраическую петлю между Waypoint Planning и Dynamics/Navigation/Energy/Control/Safety. В существующую схему нужно добавить явный `State Feedback Delay` на верхнем уровне; это реализовано отдельной функцией `repair_functional_feedback.m` с резервной копией. Генератор новых схем дополнен тем же блоком. **Последующая компиляция и миссия успешно подтверждены выводом MATLAB Online.**
+
+## Новая экспериментальная кампания (отдельная ветка)
+
+В `feature/verification-campaign-and-showcase-20261123` добавлены 4 системных
+сценария MATLAB, 10 прогонов Monte Carlo, отдельные стресс-проверки модуля
+безопасности, подмена препятствия через `Simulink.SimulationInput`, новая
+панель мониторинга и стилизация Simulink-схемы. Все эти **новые** сценарии
+нуждаются в запуске в MATLAB Online; подтверждение из старой проверенной миссии
+на них автоматически не распространяется. См. `docs/SCENARIO_TEST_MATRIX.md`.
