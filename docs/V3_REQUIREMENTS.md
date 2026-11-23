@@ -19,15 +19,15 @@
 | R-11 | Статус GOAL_REACHED и ранняя остановка | `UAV3_MissionLifecycle` | [V3-D] | verified — unit + default Simulink scenario |
 | R-12 | Телеметрия содержит 9 числовых каналов | `v3_ground.m`, To Workspace | [V3-C] | verified — unit + default Simulink scenario |
 | R-13 | Вся V2 MATLAB-регрессия сохраняется | Без изменений старых `subsystem_*.m` | существующие suites в CI | verified in GitHub CI |
-| R-14 | Независимое исследование misses сенсора | `run_robustness_study.m` | `run_robustness_smoke_tests.m` | smoke 4/4 verified; full study pending |
+| R-14 | Независимое исследование misses сенсора **V2** | `run_robustness_study.m` | smoke 4/4 (CI) + full 60-run (MATLAB Online) | **verified V2: 60/60 goal, 0 observed collisions** |
 | R-15 | Экспорт данных и отчётов | `run_defense_showcase.m` | проверить результаты `results/defense` | implemented, pending |
 | R-16 | Физическая 3D-динамика и sensor fusion | Отдельный будущий этап | будущие испытания | future |
 
 **Состояние CI MATLAB:** подтверждены `V3 algorithm unit tests: 6/6 PASS`
 и `V2 robustness smoke tests: 4/4 measured runs PASS` в GitHub
 Actions, 23.11.2026 (run ID 45167864440). **Позднее получены V3-A–D 4/4 PASS в MATLAB Online.**
-Это подтверждает базовый сценарий интегрированной модели. Полный
-исследовательский robustness sweep и расширенные карты ещё не проверены.
+Это подтверждает базовый сценарий интегрированной модели. Полный **V2** robustness sweep пройден (60/60 GOAL_REACHED) в MATLAB Online;
+расширенные карты и устойчивость интегрированной **V3** ещё не проверены.
 
 **Условия приёмки V3:** unit 6/6, Simulink stages [A]–[D] PASS,
 минимальная физическая дистанция до круга положительна, одна новая цель

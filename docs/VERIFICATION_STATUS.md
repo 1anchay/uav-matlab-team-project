@@ -231,3 +231,18 @@ V2 robustness smoke tests: 4/4 measured runs PASS
 [`docs/evidence/V3_SIMULINK_VALIDATION_20261123.md`](evidence/V3_SIMULINK_VALIDATION_20261123.md).
 Бинарные `.slx` и исходные изображения остаются в MATLAB Drive,
 не загружены в GitHub.
+
+## Завершён полный V2 robustness sweep — 60/60 (MATLAB Online, 23.11.2026)
+
+Подтверждён вывод `run_robustness_study` с **60/60 GOAL_REACHED**, **0**
+наблюдённых столкновений, медианой времени расчёта **0.443 с**.
+Две учебные карты (`unexpected`, `two_unknown`), уровни пропусков
+синтетического сенсора **0%, 15%, 35%**, по 10 прогонов на сочетание;
+все шесть сочетаний дали **10/10**. Сгенерированы локальные CSV/Markdown
+в `results/robustness/`, а `run_defense_showcase(false)` подтвердил
+локальную директорию `results/defense/`. Эти файлы ещё не загружены в Git.
+
+Это **Advanced MATLAB V2**, не испытание новой Simulink V3. Доля успеха
+100% — наблюдение для ограниченного набора; одинаковые seed повторно
+используются при разных miss rates. Детали, ограничения и полный лог:
+[robustness 60/60](evidence/V2_ROBUSTNESS_60_RUNS_20261123.md).
