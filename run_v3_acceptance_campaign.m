@@ -12,7 +12,8 @@ rows=repmat(template,1,numel(names));
 runs=cell(1,numel(names));
 for k=1:numel(names)
     rows(k).name=names{k};
-    rows(k).expected=v3_scenario_settings(names{k}).expectedCode;
+    scenario=v3_scenario_settings(names{k});
+    rows(k).expected=scenario.expectedCode;
     try
         % Only the first two cases have useful route plots.
         draw=makePlots && (k<=2);
