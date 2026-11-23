@@ -82,3 +82,26 @@ run('tests/run_functional_simulink_tests.m')
 Реактивный модуль защиты продемонстрировал корректировку траектории в одном специально созданном базовом опасном сценарии. Для более сильной защиты проекта нужны несколько мест/радиусов внезапных препятствий и прогон с полным журналом метрик. В текущем 2D Simulink-прототипе аппарат достигает цели примерно за 20 секунд, но до `StopTime=120` продолжает неподвижное моделирование и расход батареи. Следующая доработка: явный контроль жизненного цикла миссии и завершение моделирования по цели, столкновению либо критическому заряду.
 
 Подробнее — `docs/SCENARIO_TEST_MATRIX.md`.
+
+## Mission lifecycle — успешная проверка MATLAB Online (23.11.2026)
+
+**Ветка:** `feature/mission-lifecycle-supervisor-20261123`. Пользователь предоставил снимок `UAVF_Team_Model` с блоком `Mission Supervisor` и вывод успешных тестов.
+
+- `[A] 8 Model References, port dimensions and feedback delay verified.`
+- `[B] Simulink diagram compiled.`
+- `Final position: [102.36 80.28] m`; расстояние до цели **2.38 м**.
+- `Maximum speed: 9.87 m/s`; `Minimum battery: 96.65 %`.
+- `Mission end time: 19.80 s of 120.00 s configured`.
+- `Mission status code: 1` = **GOAL_REACHED**; `Evasive actions: 0` в штатном сценарии.
+- `[C] Simulation data, limits and collision checks passed.`
+- `[D] Functional 2D mission reached goal.` и `All executable Simulink tests passed.`
+
+**Повторный стресс-тест (после Mission Supervisor):**
+- Неизвестное препятствие: центр `[21.66 38.50]`, радиус `3.0 м`.
+- `Safety interventions: 50 samples`, `Minimum boundary clearance: 2.66 m`.
+- `Final distance to original goal: 2.33 m`.
+- `Hazard challenge PASSED`.
+
+**Что именно доказано:** ранняя остановка вычислений по достижении цели и безопасный обход одного синтетического неподвижного препятствия при фиксированных условиях. Скриншоты и локальные бинарные `.slx` пока не зафиксированы в GitHub.
+
+**Что не подтверждено отдельным полным логом:** `tests/run_mission_lifecycle_tests.m` (6 изолированных сценариев), `tests/run_verification_campaign_tests.m` (4 детерминированных сценария + прямые проверки Safety), терминальные состояния `COLLISION`, `LOW_BATTERY`, `INVALID_STATE` внутри Simulink. 10/10 Monte Carlo показаны на графике, но выборка ограничена. Перед слиянием PR нужно выполнить отдельные проверки этих случаев.
