@@ -10,12 +10,21 @@ modelFile = build_functional_simulink_model();
 [~,modelName] = fileparts(modelFile);
 
 % Separate Model References execute actual MATLAB Function code.
+if getSimulinkBlockHandle([modelName '/Mission Supervisor']) == -1
+    error('UAVF:MissionUpgradeNeeded', ...
+        'Run repair_functional_mission on existing generated models first.');
+end
 out = sim(modelName);
 telemetry = get(out,'uavf_telemetry');
 state = get(out,'uavf_state');
 target = get(out,'uavf_target');
+mission = get(out,'uavf_mission_status');
 
 result.time = telemetry.Time(:);
+result.missionCodes = double(mission.Data(:));
+result.duration = result.time(end);
+result.terminalCode = result.missionCodes(end);
+result.missionFinished = any(result.missionCodes ~= 0);
 result.telemetry = signal_rows(telemetry,7);
 result.state = signal_rows(state,5);
 result.target = signal_rows(target,2);
@@ -34,6 +43,10 @@ fprintf('Final position: [%.2f %.2f] m\n',result.finalPosition(1),result.finalPo
 fprintf('Distance to goal: %.2f m\n',result.distanceToGoal);
 fprintf('Maximum speed: %.2f m/s\n',result.maxSpeed);
 fprintf('Minimum battery: %.2f %%\n',result.minBattery);
+fprintf('Mission end time: %.2f s of %.2f s configured\n', ...
+    result.duration,config_uav_total_time());
+fprintf('Mission status code: %d (0=flying, 1=goal, 2=collision, 3=low battery, 4=invalid)\n', ...
+    result.terminalCode);
 fprintf('Evasive actions (samples): %d\n',result.safetyInterventions);
 if result.goalReached
     fprintf('2D Model Reference mission: GOAL_REACHED\n');
@@ -77,6 +90,11 @@ if makePlots
     stairs(result.time,result.telemetry(:,7),'LineWidth',1.1);
     grid on; ylabel('Safety code'); xlabel('Time, s');
 end
+end
+
+function totalTime = config_uav_total_time()
+cfg = config_uav();
+totalTime = cfg.totalTime;
 end
 
 function x = signal_rows(ts,n)
