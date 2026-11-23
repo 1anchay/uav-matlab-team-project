@@ -4,6 +4,8 @@
 
 Учебный проект по модельно-ориентированному проектированию автономного БПЛА. Утверждённое распределение ролей зафиксировано в [TEAM_ASSIGNMENTS.md](TEAM_ASSIGNMENTS.md), а связи между модулями — в [схеме архитектуры](docs/TEAM_INTERACTION.md).
 
+**Начать знакомство с проектом:** [Текущий статус и план демонстрации](docs/PROJECT_STATUS.md) · [Технический отчёт](docs/ACADEMIC_TECHNICAL_REPORT.md) · [7 спикеров](docs/DEFENSE_PRESENTATION_7_SPEAKERS.md).
+
 ## Участники и модули
 
 | № | Разработчик | Функция | Исходный код |
@@ -140,5 +142,45 @@ run_advanced_campaign
 ```
 
 Вся новая версия V2 описана в [Advanced V2](docs/ADVANCED_V2.md).
-Новые тесты **пока не подтверждены запуском MATLAB Online**. Эта ветка не
-изменяет прежний MATLAB-симулятор или старые `.slx`; новая V2 пока **MATLAB-only**.
+Advanced V2 **прошла 13/13 модульных и интеграционных проверок, а также 6/6
+приёмочных сценариев** в MATLAB Online. Исходные `.slx` по-прежнему не
+перезаписываются, а V2 пока остаётся MATLAB-only.
+
+## V3 — Model-Based Design и пакет материалов к защите
+
+Создана **отдельная экспериментальная** схема `UAV3_Team_Model`:
+семь исполняемых Model Reference с личными V3-алгоритмами, общая Dynamics
+и Mission Lifecycle. В отличие от первого Simulink-прототипа, обнаруженное
+препятствие передаётся в планировщик, который может менять waypoint
+непосредственно при выполнении модели. Внешние интерфейсы используют
+фиксированные размерности и именованные сигналы.
+
+```matlab
+% Новые unit-тесты (MATLAB)
+run('tests/run_v3_algorithm_tests.m')
+% Новая схема, ОБЯЗАТЕЛЬНО проверить в MATLAB Online
+build_v3_simulink_model
+r = run_v3_simulink_demo(true);
+run('tests/run_v3_simulink_tests.m')
+
+% Репрезентативность сенсорных отказов, с сохранением неудачных исходов
+study = run_robustness_study;
+export_robustness_report(study)
+
+% Пакет подтверждённой V2 для защиты
+run_defense_showcase(false)
+```
+
+**V3 Simulink ещё не запускалась в MATLAB Online** — не утверждайте, что её
+модель уже прошла интеграционные тесты. Первые тесты выполняются в Draft PR.
+Ранее проверенная `UAVF_Team_Model` и Advanced V2 сохранены отдельно.
+
+**Основные документы:** [технический отчёт](docs/ACADEMIC_TECHNICAL_REPORT.md),
+[требования и тесты V3](docs/V3_REQUIREMENTS.md),
+[сценарий защиты семи участников](docs/DEFENSE_PRESENTATION_7_SPEAKERS.md),
+[инструкция по показу преподавателю](docs/TEACHER_DEMO_RUNBOOK.md),
+[Simulink V3](models/v3/README.md).
+
+**CI V3 MATLAB-only:** подтверждены unit-тесты 6/6 и quick robustness
+4/4 в GitHub Actions (run ID 45167864440). **Это не проверка новой V3
+Simulink-модели.** Отдельно запустить `tests/run_v3_simulink_tests.m`.
