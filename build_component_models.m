@@ -28,13 +28,16 @@ for j = 1:numel(modelNames)
     end
     new_system(model);
     set_param(model,'Solver','FixedStepDiscrete','FixedStep','0.1');
+    % Model Reference: явные тип и время выборки на границах компонента.
     for k = 1:nInputs(j)
         block = sprintf('%s/In%d',model,k);
         add_block('simulink/Sources/In1',block, ...
-            'Port',num2str(k),'Position',[30 30+65*(k-1) 60 44+65*(k-1)]);
+            'Port',num2str(k), 'OutDataTypeStr','double', ...
+            'SampleTime','0.1', ...
+            'Position',[30 30+65*(k-1) 60 44+65*(k-1)]);
     end
     add_block('simulink/Sinks/Out1',[model '/Out1'], ...
-        'Position',[280 40 310 54]);
+        'OutDataTypeStr','double','Position',[280 40 310 54]);
     if j == 8
         % Unit Delay разрывает обратную связь ОБЗОРНОГО контура.
         add_block('simulink/Discrete/Unit Delay',[model '/StateMemory'], ...
