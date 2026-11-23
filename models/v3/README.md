@@ -25,7 +25,9 @@ r = run_v3_simulink_demo(true);
 run('tests/run_v3_simulink_tests.m')
 ```
 
-**Unverified until the user actually runs those commands in MATLAB Online.**
+**Verified in MATLAB Online (23 Nov 2026):** V3 unit 6/6 and V3-A–D
+Simulink integration 4/4 PASS, GOAL_REACHED after 22.60 s, one live
+replan, 20 GPS outage samples and 11.75 m minimum clearance.
 If something fails, keep the diagnostic and make a new GitHub commit; do
 not change the known-working `UAVF_Team_Model.slx` or delete earlier models.
 
@@ -72,4 +74,7 @@ knows no circle and may change waypoint upon sensor discovery.
   explicit segment verification; these implementations are **different**.
 - The model does not guarantee collision-free flight in arbitrary worlds
   and is **not** code for physical UAVs.
-- Successful baseline V2 runs must not be attributed to untested V3.
+- V3 passed its default MATLAB Online scenario, but this does **not**
+  establish behavior in arbitrary worlds or physical UAV safety.
+
+Details and measured results: [V3 MATLAB Online validation](../../docs/evidence/V3_SIMULINK_VALIDATION_20261123.md).

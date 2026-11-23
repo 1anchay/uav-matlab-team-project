@@ -11,7 +11,7 @@
 | Базовый MATLAB | 7 подсистем, маршрут и миссия | 11/11 MATLAB PASS |
 | Функциональный Simulink (`UAVF`) | 7 Model Reference + общая Dynamics; ранняя остановка | Integration [A]–[D] PASS, GOAL_REACHED, hazard challenge PASS |
 | Advanced MATLAB V2 | **Реальный online replan** неизвестных кругов, GPS outage, comms, energy reserve | 13/13 PASS, кампания 6/6 PASS |
-| **Новая V3 Simulink** | 7 персональных исполняемых Model Reference, runtime detection и отдельный replan внутри Simulink | MATLAB-only unit 6/6 PASS (CI); **Simulink интеграция ожидает запуска** |
+| **Новая V3 Simulink** | 7 персональных исполняемых Model Reference, runtime detection и отдельный replan внутри Simulink | MATLAB unit **6/6 PASS**; Simulink **V3-A–D 4/4 PASS** в MATLAB Online |
 
 ## Контрольные цифры последней проверенной Advanced V2
 
@@ -37,8 +37,8 @@ V3 algorithm unit tests: 6/6 PASS
 V2 robustness smoke tests: 4/4 measured runs PASS
 ```
 
-Эти результаты **не включают** запуск новой V3 Simulink; до проверки
-её не следует называть работоспособной.
+Это результат CI для MATLAB-кода. **После него** новая V3 Simulink
+была отдельно успешно запущена в MATLAB Online (V3-A–D 4/4).
 
 ## Новая экспериментальная версия V3
 
@@ -51,7 +51,10 @@ V2 robustness smoke tests: 4/4 measured runs PASS
 - Архитектура: фиксированные порты, Goto/From для читаемой схемы,
   явная дискретная задержка обратной связи.
 - Проверка: `run('tests/run_v3_simulink_tests.m')`.
-- Статус модели: **требуется фактическая компиляция/симуляция MATLAB Online**.
+- Статус модели: **скомпилирована и запущена в MATLAB Online; 4/4 PASS**
+  для стандартного мира. Время 22.60 с; GOAL_REACHED; 1 replan; GPS outage
+  20 шагов; минимум зазора 11.75 м; подробности в
+  [журнале V3](evidence/V3_SIMULINK_VALIDATION_20261123.md).
 
 ## Документы для защиты
 
