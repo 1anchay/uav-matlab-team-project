@@ -112,7 +112,7 @@ run('tests/run_functional_simulink_tests.m')
 
 Это **не та же модель**, что MATLAB-симуляция `run_project`: она упрощена до 2D, использует маршрут, заранее построенный MATLAB-планировщиком, и имитирует круговые препятствия. Подробнее: [модель и ограничения](models/functional/README.md), [этапы разработки](docs/IMPLEMENTATION_ROADMAP.md), [план защиты](docs/DEFENSE_GUIDE.md).
 
-**Проверка новой модели в MATLAB Online ещё не выполнена**; до успешного выполнения тестов не объединяйте соответствующий PR с интеграционной веткой.
+**Базовая функциональная Simulink-модель успешно проверена в MATLAB Online**: компиляция, интеграционные тесты [A]–[D] и GOAL_REACHED. Дополнительный Mission Supervisor также прошёл 6/6 модульных проверок; подробности — в [журнале испытаний](docs/VERIFICATION_STATUS.md).
 
 
 ## Verification Campaign & Seven-Member Showcase (next stage)
@@ -125,3 +125,20 @@ Start with [the new testing instructions](README_VERIFICATION_NEXT.md) and the
 [scenario acceptance matrix](docs/SCENARIO_TEST_MATRIX.md). The verified baseline
 remains available in the earlier feature branch and its checkpoint. New tests and
 model styling require **separate MATLAB Online verification** before merging.
+
+## Advanced Mission V2 — новое большое обновление
+
+Отдельный MATLAB-интегратор с **настоящим перепланированием маршрута после
+обнаружения неизвестного препятствия**, отказом GPS, задержками радиообмена,
+геозоной и прогнозом энергетического резерва. В каждой именной папке есть
+дополнительный `advanced_*.m`, соответствующий роли участника.
+
+```matlab
+run('tests/run_advanced_tests.m')
+run_advanced_mission('unexpected')
+run_advanced_campaign
+```
+
+Вся новая версия V2 описана в [Advanced V2](docs/ADVANCED_V2.md).
+Новые тесты **пока не подтверждены запуском MATLAB Online**. Эта ветка не
+изменяет прежний MATLAB-симулятор или старые `.slx`; новая V2 пока **MATLAB-only**.
