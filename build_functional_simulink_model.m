@@ -128,10 +128,18 @@ add_block('simulink/Sinks/Scope',[main '/Telemetry Scope'], ...
     'Position',[1250 530 1300 570]);
 wire(main,'05 Ground Station/1','Telemetry Scope/1','');
 
+% Independent mission lifecycle observer. Does not participate in control loop.
+add_functional_mission_supervisor(main,scenario_goal_xy(scene), ...
+    fullfile(root,'models','functional','mission_supervisor.m'));
+
 save_system(main,modelFile);
 open_system(main);
 fprintf('Created EXECUTABLE 2D Model Reference diagram: %s\n',modelFile);
 fprintf('Run run_functional_demo for numerical results and graphs.\n');
+end
+
+function goal = scenario_goal_xy(scene)
+goal = scene.goal(1:2);
 end
 
 function make_reference_model(name,ins,outs,sourceFile,outDir,dt,isNav,isDynamics,inputSizes)
