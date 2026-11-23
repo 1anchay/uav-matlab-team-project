@@ -6,10 +6,10 @@
 
 | № | Подсистема | Ответственный | MATLAB-функция |
 |---|---|---|---|
-| 1 | Навигация | Ernesto Horserofl | `subsystem_navigation` |
+| 1 | Навигация | Эрнест Карпухин | `subsystem_navigation` |
 | 2 | Управление | Иван Живоглядов | `subsystem_flight_control` |
-| 3 | Маршрут | Бодя Лемченко | `subsystem_route_planning` |
-| 4 | Обнаружение | Александр Лзедзей | `subsystem_object_detection` |
+| 3 | Маршрут | Богдан Лемченко | `subsystem_route_planning` |
+| 4 | Обнаружение | Александр Дзедзей | `subsystem_object_detection` |
 | 5 | Наземная станция | Арсений Терехов | `subsystem_ground_station` |
 | 6 | Безопасность | Артём Пучков | `subsystem_flight_safety` |
 | 7 | Энергосистема | Иван Касимов | `subsystem_energy` |

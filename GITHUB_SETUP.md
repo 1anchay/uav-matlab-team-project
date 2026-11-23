@@ -1,23 +1,41 @@
-# Подключение семи участников к GitHub
+# Доступ к GitHub для всех семи участников
 
-У проекта один общий репозиторий: `1anchay/uav-matlab-team-project`. Владелец может предоставить коллегам права записи.
+Репозиторий: https://github.com/1anchay/uav-matlab-team-project
 
-## Два новых участника
-- **Артём Пучков:** `team/artem-flight-safety` и `team/06_artem_puchkov_flight_safety/`.
-- **Иван Касимов:** `team/ivan-kasimov-energy` и `team/07_ivan_kasimov_energy/`.
+## Почему публичности недостаточно
 
-Чтобы пригласить их как collaborators, нужно узнать **их GitHub usernames**. Отображаемые имена из мессенджера не подходят для приглашения.
+В публичном репозитории все могут читать и форкать код. Чтобы самостоятельно сохранять изменения в **этом** репозитории (`git push`), участник должен иметь права `Write` или выше. Никнейм из Discord — не обязательно GitHub-username.
 
-## Создать персональные ветки вручную
+## Действия владельца
+
+1. Попросить у участников **точные ссылки на профили GitHub** (например, `https://github.com/username`).
+2. В репозитории открыть **Settings → Collaborators and teams → Add people** (названия пунктов могут немного отличаться).
+3. Пригласить каждый подтверждённый GitHub-аккаунт с ролью **Write**.
+4. Дождаться принятия приглашения; после этого участник может отправлять изменения в свою ветку.
+5. Рекомендация: включить для `main` защиту ветки и обязательное ревью Pull Request, если настройки тарифного плана это позволяют.
+
+Без известных GitHub usernames я не могу безопасно назначить права конкретным людям. Альтернатива — Fork → Pull Request без прямого доступа на запись.
+
+## Рабочие ветки
+
+- **Эрнест Карпухин:** `team/ernesto-navigation` → `team/01_Карпухин_Эрнест/`
+- **Иван Живоглядов:** `team/ivan-flight-control` → `team/02_Живоглядов_Иван/`
+- **Богдан Лемченко:** `team/bodya-route-planning` → `team/03_Лемченко_Богдан/`
+- **Александр Дзедзей:** `team/aleksandr-object-detection` → `team/04_Дзедзей_Александр/`
+- **Арсений Терехов:** `team/arseniy-ground-station` → `team/05_Терехов_Арсений/`
+- **Артём Пучков:** `team/artem-flight-safety` → `team/06_Пучков_Артём/`
+- **Иван Касимов:** `team/ivan-kasimov-energy` → `team/07_Касимов_Иван/`
+
+Пять исторических веток сохранены, для модулей 06/07 используются новые ветки. Необходимо регулярно синхронизировать их с `main` после утверждения изменений.
+
 ```powershell
 git fetch origin
-git switch main
-git pull
-git switch -c team/artem-flight-safety
-git push -u origin team/artem-flight-safety
-git switch main
-git switch -c team/ivan-kasimov-energy
-git push -u origin team/ivan-kasimov-energy
+git switch team/ivan-kasimov-energy
+git merge origin/main
+# ... редактировать свою папку, проверить MATLAB ...
+git add .
+git commit -m "[ENERGY] update battery simulation"
+git push
 ```
 
-Дополнительно можно использовать `bootstrap_github.ps1` (уже существующий репозиторий скрипт не пересоздаёт). Работа ведётся через Pull Request.
+> `bootstrap_github.ps1` — исторический скрипт первоначального создания проекта. **Не запускай его повторно на существующем репозитории**: он включает операции отправки веток и `main`. Для приглашения используй настройки GitHub и не передавай пароли или токены участникам.

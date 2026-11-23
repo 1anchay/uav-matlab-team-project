@@ -1,40 +1,49 @@
-# Работа команды из 7 участников
+# Как работать в команде из 7 человек
 
-## Клонирование
+## 1. Получить доступ
+
+Публичный репозиторий можно клонировать без приглашения, но для `git push` нужен доступ **Write**. Владелец приглашает GitHub-аккаунты участников; имена из Discord или мессенджера не заменяют GitHub username. См. [GITHUB_SETUP.md](GITHUB_SETUP.md).
+
 ```powershell
 git clone https://github.com/1anchay/uav-matlab-team-project.git
 cd uav-matlab-team-project
+git fetch origin
 ```
 
-## Ветки
-Каждый работает только в своей ветке, указанной в [TEAM_ASSIGNMENTS.md](TEAM_ASSIGNMENTS.md). Например:
+## 2. Работать в своей ветке
+
+Найди свою ветку и именную папку в [TEAM_ASSIGNMENTS.md](TEAM_ASSIGNMENTS.md). Пример для Артёма:
 
 ```powershell
-git fetch origin
 git switch team/artem-flight-safety
 git merge origin/main
 ```
 
-Ключевые новые ветки:
-- `team/artem-flight-safety` — Артём Пучков, безопасность;
-- `team/ivan-kasimov-energy` — Иван Касимов, энергосистема.
+Если персональной ветки нет, её создают от актуальной `main` после согласования с владельцем. Старые ветки сохраняют исторические названия, чтобы не терять существующие ссылки и коммиты.
 
-## MATLAB-проверки
+## 3. Менять свой модуль
+
+Изменяй прежде всего `team/NN_Фамилия_Имя/`, читай README внутри и соблюдай [контракт сигналов](docs/INTERFACES.md). Для изменений `simulate_uav.m`, `config_uav.m`, `setup_paths.m`, тестов и общих интерфейсов предупреди команду и открой PR.
+
+## 4. Проверить локально
+
 ```matlab
 run_project
 run('tests/run_tests.m')
 ```
 
-## Сохранение работы
+## 5. Отправить изменения
+
 ```powershell
 git add .
-git commit -m "[SAFETY] add obstacle guard tests"
-git push
+git commit -m "[SAFETY] improve avoidance logic"
+git push -u origin HEAD
 ```
 
-Префиксы: `[NAV]`, `[FLIGHT]`, `[ROUTE]`, `[DETECT]`, `[GROUND]`, `[SAFETY]`, `[ENERGY]`, `[INTEGRATION]`.
+Используй префиксы: `[NAV]`, `[FLIGHT]`, `[ROUTE]`, `[DETECT]`, `[GROUND]`, `[SAFETY]`, `[ENERGY]` или `[INTEGRATION]`.
 
-## Pull Request
-Укажите, что изменено, какие входы/выходы затронуты, пройдены ли тесты. При изменении интерфейса одновременно обновите `docs/INTERFACES.md` и связанные вызовы.
+## 6. Pull Request → review → merge
 
-Другой участник проверяет PR. Только после этого изменения объединяются с `main`.
+В PR перечисли изменённые файлы, цель, тесты и затронутые интерфейсы. Другой участник проверяет изменения; только затем они попадают в `main`. **Не делай прямой push в main.**
+
+> При переезде с прежних имён папок обнови свою локальную ветку от `origin/main` после объединения миграции. Старые пути не должны оставаться в MATLAB path одновременно с новыми.

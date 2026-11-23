@@ -4,6 +4,14 @@ root = fileparts(fileparts(mfilename('fullpath')));
 addpath(root);
 setup_paths();
 
+% Проверка структуры: семь MATLAB-функций в семи именных папках.
+moduleFolders = {'01_Карпухин_Эрнест', '02_Живоглядов_Иван', '03_Лемченко_Богдан', '04_Дзедзей_Александр', '05_Терехов_Арсений', '06_Пучков_Артём', '07_Касимов_Иван'};
+moduleFunctions = {'subsystem_navigation.m', 'subsystem_flight_control.m', 'subsystem_route_planning.m', 'subsystem_object_detection.m', 'subsystem_ground_station.m', 'subsystem_flight_safety.m', 'subsystem_energy.m'};
+for k = 1:numel(moduleFolders)
+    moduleFile = fullfile(root, 'team', moduleFolders{k}, moduleFunctions{k});
+    assert(exist(moduleFile, 'file') == 2, 'Missing module: %s', moduleFile);
+end
+
 cfg = config_uav();
 rng(cfg.seed);
 scenario = init_scenario(cfg);
