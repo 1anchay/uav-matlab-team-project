@@ -161,3 +161,19 @@ Mission campaign: 4/4 PASS; randomized trials collision-free.
 **Отчёт:** `export_advanced_report` создал локально `results/v2/unexpected/`; CSV и summary в GitHub не загружены. **CI:** подтверждённого запуска GitHub Actions в предоставленных данных нет, поэтому статус CI не отмечаем PASS.
 
 **Сфера применимости:** учебная MATLAB-модель с синтетическими неподвижными кругами в XY, а не физическая модель реального БПЛА. V2 ещё не перенесена в Simulink Model Reference; прежняя Simulink-модель существует отдельно. Стандартные пять/шесть сценариев и 13 проверок не являются доказательством всеобщей безопасности.
+
+## Дополнительный независимый приёмочный тест Advanced V2 — 6/6 PASS
+
+**Дата:** 23 ноября 2026 г. **Источник:** текстовый лог MATLAB Online, предоставленный пользователем.
+
+```text
+clear              expected=GOAL_REACHED  observed=GOAL_REACHED  PASS
+unexpected         expected=GOAL_REACHED  observed=GOAL_REACHED  PASS
+gps_outage         expected=GOAL_REACHED  observed=GOAL_REACHED  PASS
+radio_blackout     expected=GOAL_REACHED  observed=GOAL_REACHED  PASS
+critical_battery   expected=LOW_BATTERY   observed=LOW_BATTERY   PASS
+two_unknown        expected=GOAL_REACHED  observed=GOAL_REACHED  PASS
+Advanced V2 campaign acceptance: 6/6 PASS
+```
+
+Команда: `run('tests/run_advanced_campaign_tests.m')`. Это **вторая подтверждённая серия** после `13/13 PASS`; результаты совпали с ранее показанной кампанией. Сценарий низкого заряда корректно остановлен, а не ошибочно признан неудачной миссией. Автоматический прогон GitHub Actions ещё нужно подтвердить отдельно.
