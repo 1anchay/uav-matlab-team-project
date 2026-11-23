@@ -6,6 +6,16 @@ function route = subsystem_route_planning(startPos, goalPos, obstacles, cfg)
 route = [startPos; goalPos];
 clearance = cfg.route.clearance;
 
+% Недопустимо начинать или заканчивать маршрут внутри защищённой зоны.
+for k = 1:numel(obstacles)
+    required = obstacles(k).radius + clearance;
+    if norm(startPos(1:2) - obstacles(k).center) < required || ...
+            norm(goalPos(1:2) - obstacles(k).center) < required
+        error('UAV:RoutePlanning:InvalidEndpoint', ...
+            'Start or goal is inside the safety zone of obstacle %d.', k);
+    end
+end
+
 for pass = 1:cfg.route.maxPasses
     changed = false;
 
@@ -56,15 +66,10 @@ for pass = 1:cfg.route.maxPasses
             ok = true;
             cost = 0;
             for q = 1:size(pts,1)-1
-                % На этапе выбора допускаем проверку против всех препятствий.
+                % Каждый участок должен быть безопасен относительно ВСЕХ препятствий.
                 if ~segment_is_safe(pts(q,:), pts(q+1,:), obstacles, clearance)
-                    % Точки вокруг текущего препятствия могут касаться его
-                    % безопасной зоны. Проверим отдельно с небольшим допуском.
-                    dCurrent = segment_circle_clearance(pts(q,1:2), pts(q+1,1:2), obs.center);
-                    if dCurrent < obs.radius + clearance - 1e-6
-                        ok = false;
-                        break;
-                    end
+                    ok = false;
+                    break;
                 end
                 cost = cost + norm(pts(q+1,1:2) - pts(q,1:2));
             end
@@ -107,5 +112,13 @@ end
 % Финальная защита от чрезмерного числа точек при неудачной геометрии.
 if size(route,1) > 60
     warning('Planner produced many waypoints. Check obstacle geometry.');
+end
+
+% Нельзя возвращать опасный маршрут, даже если закончились попытки обхода.
+for s = 1:size(route,1)-1
+    if ~segment_is_safe(route(s,:), route(s+1,:), obstacles, clearance)
+        error('UAV:RoutePlanning:UnsafeRoute', ...
+            'Unsafe route segment %d after %d planning passes.', s, cfg.route.maxPasses);
+    end
 end
 end
