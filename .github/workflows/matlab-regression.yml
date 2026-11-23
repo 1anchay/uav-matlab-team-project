@@ -30,4 +30,4 @@ jobs:
       - name: V3 MATLAB algorithms and sensor robustness smoke tests
         uses: matlab-actions/run-command@v3
         with:
-          command: "run('tests/run_v3_algorithm_tests.m'); run('tests/run_robustness_smoke_tests.m')"
+          command: "run('tests/run_v3_algorithm_tests.m'); run('tests/run_v3_scenario_contract_tests.m'); run('tests/run_robustness_smoke_tests.m')"

@@ -95,3 +95,24 @@ run_defense_showcase(false)
 Новая версия хранится отдельно и не перезаписывает ранее проверенную
 `UAVF_Team_Model.slx`. Зависимые PR нужно объединять в порядке
 с согласованием интерфейсов командой.
+
+## Следующий этап: V3 terminal / multi-obstacle fault injection
+
+Подготовлен новый экспериментальный набор из **шести** изолированных
+V3 Simulink-сценариев: normal, two_unknown, collision_at_start,
+critical_battery, invalid_state, goal_at_start. Используется
+`Simulink.SimulationInput`, поэтому изменения начальных условий
+и карты не сохраняются в прежние `.slx`. Для геометрии реализована
+проверка пересечения **между** дискретными позициями.
+
+**Фактический результат:** сценарии V3 Extended **6/6 PASS** в MATLAB Online:
+два круга — 2 replans, GOAL_REACHED, 24.70 с, зазор 11.75 м; четыре
+терминальные проверки — корректный статус и остановка при t=0.
+GitHub Actions **scenario contracts 4/4 PASS** (run 45172166508). Описание и инструкции:
+[V3 Extended Validation](V3_EXTENDED_VALIDATION.md).
+
+Презентацию для семи участников подготовим позднее после закрепления
+новых фактических результатов: [финальный план](DEFENSE_FINALIZATION_PLAN.md).
+
+
+[Подтверждённый лог расширенной V3](evidence/V3_EXTENDED_6_OF_6_20261123.md).

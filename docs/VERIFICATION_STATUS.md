@@ -246,3 +246,38 @@ V2 robustness smoke tests: 4/4 measured runs PASS
 100% — наблюдение для ограниченного набора; одинаковые seed повторно
 используются при разных miss rates. Детали, ограничения и полный лог:
 [robustness 60/60](evidence/V2_ROBUSTNESS_60_RUNS_20261123.md).
+
+## V3 Extended Simulink 6/6 — пройдено в MATLAB Online, 23.11.2026
+
+Команда сообщила `V3 extended Simulink acceptance: 6/6 PASS` и
+`Six V3 fault-injection and obstacle scenarios: 6/6 PASS`.
+Сценарий двух неизвестных кругов: код 1/1, **2 replans**,
+**24.70 с**, минимальный swept clearance **11.75 м**.
+Старт с намеренным столкновением: код 2 (t=0, −7.00 м);
+критическая батарея: код 3 (t=0); NaN-state: код 4 (t=0,
+нельзя определить зазор); старт на цели: код 1 (t=0).
+Базовый сценарий: код 1, **22.60 с**, 1 replan, 11.75 м зазора.
+
+Отдельно GitHub Actions run `45172166508` завершился **success**,
+`V3 scenario contract tests: 4/4 PASS` вместе с V2 и V3 unit regression.
+Эта проверка CI **не является** выполнением V3 Simulink.
+
+Подробный лог: [V3 Extended 6/6](evidence/V3_EXTENDED_6_OF_6_20261123.md).
+Бинарные исходники .slx и полная выгрузка acceptance.csv ещё не в GitHub.
+
+## V3 Extended — экспорт измеренных результатов подтверждён
+
+23.11.2026 пользователь повторно запустил `run_v3_acceptance_campaign(false)`;
+вывод вновь подтвердил **6/6 PASS** с теми же измерениями. Затем
+`export_v3_acceptance_report(campaign)` сообщил:
+
+```text
+Extended V3 evidence exported:
+/MATLAB Drive/Repositories/uav-matlab-team-project/results/v3/extended
+```
+
+По контракту экспортера ожидаются локальные `acceptance.csv` и
+`RESULTS.md`; непосредственно содержимое этих файлов в GitHub не
+просмотрено, и они **не добавлены** в репозиторий. Перед защитой следует
+проверить файлы в MATLAB Drive, сохранить версионированную копию
+подтверждённых материалов и записать версию MATLAB/коммит.

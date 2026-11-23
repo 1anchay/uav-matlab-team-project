@@ -1,0 +1,7 @@
+name,expected,observed,replans,known,clearance,duration,accepted,error
+baseline,1,1,1,1,11.7504332240207,22.6,1,
+two_unknown,1,1,2,2,11.7504332240207,24.7,1,
+collision_at_start,2,2,1,1,-7,0,1,
+critical_battery,3,3,0,0,57.0312423743285,0,1,
+invalid_state,4,4,0,0,NaN,0,1,
+goal_at_start,1,1,0,0,57.0312423743285,0,1,

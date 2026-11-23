@@ -184,3 +184,29 @@ run_defense_showcase(false)
 **CI V3 MATLAB-only:** подтверждены unit-тесты 6/6 и quick robustness
 4/4 в GitHub Actions (run ID 45167864440). **Это не проверка новой V3
 Simulink-модели.** Отдельно запустить `tests/run_v3_simulink_tests.m`.
+
+## V3 — расширенные испытания перед защитой (следующий этап)
+
+В экспериментальной ветке `feature/v3-fault-injection-defense-readiness-20261123`
+новый `run_v3_scenario` использует `Simulink.SimulationInput` для
+разовых параметров испытаний **без изменения исходных .slx**.
+
+```matlab
+run('tests/run_v3_scenario_contract_tests.m')
+campaign = run_v3_acceptance_campaign(true);
+export_v3_acceptance_report(campaign)
+run('tests/run_v3_extended_integration_tests.m')
+```
+
+Сценарии: baseline, two_unknown, collision_at_start, critical_battery,
+invalid_state и goal_at_start. **Новые Simulink-сценарии ожидают
+фактической проверки**, старые 4/4 PASS остаются отдельным подтверждённым
+результатом. Подробности: [V3 Extended Validation](docs/V3_EXTENDED_VALIDATION.md).
+
+Перед презентацией: [план завершения проекта](docs/DEFENSE_FINALIZATION_PLAN.md).
+
+**Новый подтверждённый результат V3:** шесть дополнительных
+интеграционных Simulink-сценариев **6/6 PASS**; 2 неизвестных круга,
+2 online replans, GOAL_REACHED за 24.70 с, 11.75 м до границы. GitHub
+CI scenario contracts 4/4 PASS. Подробнее:
+[протокол V3 Extended](docs/evidence/V3_EXTENDED_6_OF_6_20261123.md).
