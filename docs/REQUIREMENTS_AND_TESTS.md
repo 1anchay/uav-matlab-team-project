@@ -35,3 +35,20 @@ run('tests/run_simulink_smoke_tests.m')
 - Simulink **Model Reference** сейчас архитектурные заглушки. Перенос MATLAB-алгоритмов в исполняемые .slx — отдельный этап с верификацией.
 - Умение защитить проект означает продемонстрировать *требование → модель → тест → результат*, а не просто показать красивую блок-схему.
 - В дальнейшем нужны сценарии с динамическими препятствиями, потерей GPS, низким зарядом и вариацией настроек; результаты следует сохранить и задокументировать.
+
+## Исполняемый функциональный Simulink-прототип (отдельный контур)
+
+Ветка `feature/executable-simulink-architecture-20261123` добавляет следующие проверяемые требования к **2D Model Reference**; они не заменяют требования 3D MATLAB-модели.
+
+| ID | Проверяемый аспект | Файл реализации | Программа проверки |
+|---|---|---|---|
+| UAVF-01 | Раздельная компиляция 7 алгоритмов + общей Dynamics | `build_functional_simulink_model.m` | `tests/run_functional_simulink_tests.m`: 8 Model Reference / MATLAB Function |
+| UAVF-02 | Дискретное состояние [x;y;vx;vy;battery], без алгебраического цикла | `models/functional/dynamics_step.m` | compile/sim, state log |
+| UAVF-03 | Ограничения скорости ≤10 м/с и заряда 0–100 % | `simulink_control.m`, `simulink_energy.m`, Dynamics | numerical assertions |
+| UAVF-04 | Реальные координаты не пересекают круги препятствий | `simulink_detection.m`, `simulink_safety.m` | пересечение с исходными кругами |
+| UAVF-05 | Цель [100,80] достигается в базовом 2D-сценарии | `simulink_waypoint.m` и остальные модели | `distanceToGoal < 5` |
+| UAVF-06 | Ведётся запись телеметрии и состояния | `simulink_ground.m` и To Workspace | формат и конечность результатов |
+
+**Статус:** код создан, проверка MATLAB/Simulink для UAVF-01..06 **ожидает выполнения в MATLAB Online**. Отдельный отчёт: [VERIFICATION_STATUS.md](VERIFICATION_STATUS.md).
+
+Ограничение: в настоящей Simulink-схеме блок №03 выбирает waypoint из маршрута, построенного MATLAB ещё до симуляции. Устройство-планировщик внутри Simulink не выполняет полный геометрический поиск в реальном времени.
