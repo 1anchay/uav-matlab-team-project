@@ -113,3 +113,15 @@ run('tests/run_functional_simulink_tests.m')
 Это **не та же модель**, что MATLAB-симуляция `run_project`: она упрощена до 2D, использует маршрут, заранее построенный MATLAB-планировщиком, и имитирует круговые препятствия. Подробнее: [модель и ограничения](models/functional/README.md), [этапы разработки](docs/IMPLEMENTATION_ROADMAP.md), [план защиты](docs/DEFENSE_GUIDE.md).
 
 **Проверка новой модели в MATLAB Online ещё не выполнена**; до успешного выполнения тестов не объединяйте соответствующий PR с интеграционной веткой.
+
+
+## Verification Campaign & Seven-Member Showcase (next stage)
+
+For an independent suite of reproducible failure cases, Monte Carlo results, a
+seven-module monitoring dashboard and an **unexpected obstacle** in the functional
+Simulink simulation, use the experimental branch `feature/verification-campaign-and-showcase-20261123`.
+
+Start with [the new testing instructions](README_VERIFICATION_NEXT.md) and the
+[scenario acceptance matrix](docs/SCENARIO_TEST_MATRIX.md). The verified baseline
+remains available in the earlier feature branch and its checkpoint. New tests and
+model styling require **separate MATLAB Online verification** before merging.
